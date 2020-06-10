@@ -1,0 +1,6 @@
+cradle:
+  cabal:
+    - path: "./exe/xmonad.hs"
+      component: "meck-xmonad:exe:xmonad"
+    - path: "./exe/taffybar.hs"
+      component: "meck-xmonad:exe:taffybar"
