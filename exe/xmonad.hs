@@ -167,7 +167,7 @@ topBarTheme = def { activeColor         = active
 --                               Applictions                              {{{
 -----------------------------------------------------------------------------
 
-myTerminal = "alacritty"
+myTerminal = "kitty"
 myBrowser = "brave"
 myLauncher = "rofi"
 myCalculator = "galculator"
