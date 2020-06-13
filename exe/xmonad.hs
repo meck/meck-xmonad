@@ -4,11 +4,17 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE TupleSections #-}
 
-import           Data.List                      ( delete )
-import qualified Data.Map                       as M
+import           Control.Arrow                  ( first )
+import           Data.List                      ( delete
+                                                , intercalate
+                                                )
+import qualified Data.Map                      as M
 import           System.Exit
 import           System.IO
+import           Text.ParserCombinators.ReadP   ( readP_to_S )
+
 import           System.Taffybar.Support.PagerHints
                                                 ( pagerHints )
 
@@ -55,7 +61,6 @@ import           XMonad.Layout.Spacing
 
 import           XMonad.Prompt
 import           XMonad.Prompt.ConfirmPrompt
-
 
 import qualified XMonad.StackSet               as W
 
@@ -124,7 +129,9 @@ scaleRes = floor . ( resScaling * ) . realToFrac
 defaultSpacing = toInteger $ scaleRes 10
 
 myFont = "xft:Roboto"
-fontW700 = (<> ":weight=700")
+
+fontW :: Integer -> String -> String
+fontW w = (<> ":weight=" <> show w)
 
 myMonspaceFont = "xft:Iosevka"
 
@@ -136,7 +143,7 @@ urgent   = hexCol nord12
 critical = hexCol nord11
 
 myPromptTheme :: XPConfig
-myPromptTheme = def { font              = fontW700 myFont
+myPromptTheme = def { font              = fontW 300 myFont
                     , bgColor           = lightBg
                     , fgColor           = fgCol
                     , fgHLight          = active
@@ -146,7 +153,9 @@ myPromptTheme = def { font              = fontW700 myFont
                     , position          = Top
                     }
 
-hotPromptTheme = myPromptTheme { fgColor = critical }
+hotPromptTheme = myPromptTheme { fgColor = critical
+                               , font    = fontW 700 myFont
+                               }
 
 topBarTheme = def { activeColor         = active
                   , inactiveColor       = inactive
@@ -167,13 +176,46 @@ topBarTheme = def { activeColor         = active
 --                               Applictions                              {{{
 -----------------------------------------------------------------------------
 
-myTerminal = "kitty"
+myTerminal = "alacritty"
 myBrowser = "brave"
 myLauncher = "rofi"
 myCalculator = "galculator"
-rofiCalc = "rofi-calc"
 rofiClip =
     "rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'"
+
+
+
+--------------------------------------------------------------------------}}}
+--                                Shortcut Prompt                         {{{
+-----------------------------------------------------------------------------
+
+shortcutsCmds = [ ("v" , "Fetch from clipboard" , spawn rofiClip)
+                , ("n" , "Network config"       , spawn "networkmanager_dmenu")
+                , ("c" , "Rofi Calculator"      , spawn "rofi-calc")
+                ]
+
+-- Display a prompt with hotkeys
+-- as in `shortcutsCmds`
+shortcutsPrompt = mkXPrompt ShortcutsPrompt
+                            promptCfg
+                            (const $ pure [])
+                            (const $ pure ())
+  where
+    promptCfg = myPromptTheme { promptKeymap = keymap' }
+    keymap'   = M.fromList $ first (0, ) <$> ((xK_Escape, quit) : keymap)
+    keymap =
+        (\(c, _, action) -> (fst $ head $ readP_to_S parseKey c, action >> quit)
+            )
+            <$> shortcutsCmds
+
+data ShortcutsPrompt = ShortcutsPrompt
+
+instance XPrompt ShortcutsPrompt where
+    showXPrompt ShortcutsPrompt =
+        intercalate "    "
+            $   (\(c, desc, _) -> c <> ": " <> desc <> "  ")
+            <$> shortcutsCmds
+
 
 
 --------------------------------------------------------------------------}}}
@@ -498,6 +540,7 @@ myKeys conf = let
     subKeys "System"
         [ ("M-q"                    , addName "Restart XMonad"              $ spawn "xmonad --restart")
         , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt hotPromptTheme  "Quit XMonad" $ io exitSuccess)
+        , ("M-'"                    , addName "Shortcuts Menu"              shortcutsPrompt)
         ] ^++^
 
 
@@ -514,10 +557,8 @@ myKeys conf = let
         ] ^++^
 
     subKeys "Launcher"
-         [ ("M-<Space> <Space>"     , addName "Launcher"                   $ spawn $ myLauncher <> " -matching fuzzy -show combi")
-         , ("M-<Space> v"           , addName "Clipboard"                  $ spawn rofiClip)
-         , ("M-<Space> c"           , addName "Calculator"                 $ spawn rofiCalc)
-         , ("M-<Space> n"           , addName "Network Manager"            $ spawn "networkmanager_dmenu")
+         [ ("M-<Space>"             , addName "Launcher"                   $ spawn $ myLauncher <> " -matching fuzzy -show combi")
+         , ("M-C-v"                 , addName "Clipboard"                  $ spawn rofiClip)
          , ("M-<Return>"            , addName "Terminal"                   $ spawn myTerminal)
          , ("M-\\"                  , addName "Browser"                    $ spawn myBrowser)
          , ("<Print>"               , addName "Screenshot"                 $ spawn "flameshot gui")
