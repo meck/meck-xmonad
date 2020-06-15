@@ -37,6 +37,7 @@ import           XMonad.Actions.WithAll
 import           XMonad.Hooks.DynamicProperty
 import           XMonad.Hooks.EwmhDesktops      ( ewmh
                                                 , ewmhDesktopsLogHookCustom
+                                                , ewmhDesktopsEventHookCustom
                                                 )
 import           XMonad.Hooks.InsertPosition
 import           XMonad.Hooks.ManageDocks       ( docks
@@ -269,11 +270,12 @@ scratchpads =
 --                                 Events                                 {{{
 -----------------------------------------------------------------------------
 
-myEventHook = disableMFFHook <> spotifyFloatHook
+myEventHook = disableMFFHook <> spotifyFloatHook <> modifyWSPorderHook
   where
 
     -- Disable mouse follows focus for these layouts
-    noMFFLayouts = ["Accordion"]
+    noMFFLayouts = []
+
 
     disableMFFHook = followOnlyIf $ do
 
@@ -286,9 +288,17 @@ myEventHook = disableMFFHook <> spotifyFloatHook
 
         pure $ not isNoMFFLayout && not isZoomedLayout
 
+
     spotifyFloatHook =
         dynamicTitle (title =? "Spotify" --> doCenterRect (2 / 3, 2 / 3))
 
+
+    -- Reorder the workspaces using DynamicWorkspaceOrder and
+    -- remove NSP workspace from whats sent to taffybar.
+    -- Used by TB for clicking workspaces.
+    modifyWSPorderHook e = do
+        ordS <- DO.getSortByOrder
+        ewmhDesktopsEventHookCustom (ordS . namedScratchpadFilterOutWorkspace) e
 
 
 ---------------------------------------------------------------------------}}}
@@ -302,6 +312,7 @@ myLogHook =
 
     -- Reorder the workspaces using DynamicWorkspaceOrder and
     -- remove NSP workspace from whats sent to taffybar.
+    -- Used by TB for selecting workspaces.
     modifyWSPorderHook =
         (ewmhDesktopsLogHookCustom . (namedScratchpadFilterOutWorkspace .))
             =<< DO.getSortByOrder
