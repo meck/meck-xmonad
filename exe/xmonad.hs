@@ -568,7 +568,7 @@ myKeys conf = let
         ] ^++^
 
     subKeys "Launcher"
-         [ ("M-<Space>"             , addName "Launcher"                   $ spawn $ myLauncher <> " -matching fuzzy -show combi")
+         [ ("M-<Space>"             , addName "Launcher"                   $ spawn $ myLauncher <> " -show combi")
          , ("M-C-v"                 , addName "Clipboard"                  $ spawn rofiClip)
          , ("M-<Return>"            , addName "Terminal"                   $ spawn myTerminal)
          , ("M-\\"                  , addName "Browser"                    $ spawn myBrowser)
