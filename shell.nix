@@ -12,24 +12,28 @@ let
     compiler = compiler;
     scaling = 1.0;
   };
-  all-hies = import
-    (fetchTarball "https://github.com/infinisil/all-hies/tarball/haskell.nix")
-    { };
 
-  # all-hies = import (builtins.fetchTarball {
-  #   name = "all-hies-2020-06-01";
-  #   url =
-  #     "https://github.com/infinisil/all-hies/archive/4d52f70a28b337a70d1c92f5a4483ebcd7612e03.tar.gz";
-  #   sha256 = "0g7bmzx2ifij87j32kvbmy1gxcyqiawwafra6l027n70kx5hbfva";
-  # }) { };
+  # all-hies = import
+  #   (fetchTarball "https://github.com/infinisil/all-hies/tarball/haskell.nix")
+  #   { };
 
-  hie = (all-hies.selection { selector = p: { inherit (p) "ghc883"; }; });
+  # hie = (all-hies.selection { selector = p: { inherit (p) "ghc883"; }; });
+
+  nix-hls = import (pkgs.fetchFromGitHub {
+      owner = "poscat0x04";
+      repo = "hls-nix";
+      rev = "834dc2d7c6aef23fbeb7240561b4b0574822d8ad";
+      sha256 = "18ka7b9rjbn4x9arxnazl4kd2017r67m0yalqjmhfhgch8arzfck";
+  });
+
+  hls = (nix-hls { tag = "master"; version = "8.8.3";}).exes.haskell-language-server;
 
 in myHaskellPackages.shellFor {
   packages = pkgs: [ drv myHaskellPackages.cabal-install ];
   withHoogle = true;
   nativeBuildInputs = with myHaskellPackages; [
-    hie
+    # hie
+    hls
     ormolu
     brittany
     weeder
