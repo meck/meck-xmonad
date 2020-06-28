@@ -431,7 +431,7 @@ myLayoutHook = mkToggle1 ZOOM $ tall ||| bsp ||| full
             $ mySpacing
             $ mkToggle1 MIRROR
             $ mkToggle1 REFLECTX
-            $ ResizableTall 1 (1 / 200) (6 / 10) []
+            $ ResizableTall 1 (1 / 200) (11 / 20) []
 
 
 

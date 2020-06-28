@@ -22,8 +22,8 @@ let
   nix-hls = import (pkgs.fetchFromGitHub {
       owner = "poscat0x04";
       repo = "hls-nix";
-      rev = "834dc2d7c6aef23fbeb7240561b4b0574822d8ad";
-      sha256 = "18ka7b9rjbn4x9arxnazl4kd2017r67m0yalqjmhfhgch8arzfck";
+      rev = "df53e76a882da8792c44f9fe337fa994ffb29a48";
+      sha256 = "13phk3p7qkwb8mlzqzncxdxmabkswh7hn8h7lqxaxrkhxrv8h5j6";
   });
 
   hls = (nix-hls { tag = "master"; version = "8.8.3";}).exes.haskell-language-server;
