@@ -178,7 +178,7 @@ topBarTheme = def { activeColor         = active
 -----------------------------------------------------------------------------
 
 myTerminal = "alacritty"
-myBrowser = "brave"
+myBrowser = "firefox"
 myLauncher = "rofi"
 myCalculator = "galculator"
 rofiClip =
@@ -372,6 +372,7 @@ myManageHook =
             [ resource =? "desktop_window"        -?> doIgnore
             , resource =? "stalonetray"           -?> doIgnore
             , isRole =? "GtkFileChooserDialog"    -?> doCenterRect (1/3, 1/2)
+            , className =? "lxqt-openssh-askpass" -?> doCenterFloat
             , isDialog                            -?> doCenterFloat
             , isRole =? "pop-up"                  -?> doCenterFloat
             , isInProperty "_NET_WM_WINDOW_TYPE"
