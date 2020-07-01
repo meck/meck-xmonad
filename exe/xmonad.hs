@@ -50,10 +50,12 @@ import           XMonad.Layout.BinarySpacePartition
 import           XMonad.Layout.BorderResize
 import           XMonad.Layout.CenteredMaster   ( centerMaster )
 import           XMonad.Layout.Decoration
+import           XMonad.Layout.Grid
 import           XMonad.Layout.MagicFocus
 import           XMonad.Layout.MultiToggle
 import           XMonad.Layout.MultiToggle.Instances
 import           XMonad.Layout.NoFrillsDecoration
+import           XMonad.Layout.PerWorkspace
 import           XMonad.Layout.Reflect
 import           XMonad.Layout.Renamed
 import           XMonad.Layout.ResizableTile
@@ -226,6 +228,7 @@ instance XPrompt ShortcutsPrompt where
 wsDefault = "main"
 wsConf    = "nix Config"
 wsCode    = "code"
+wsComs    = "coms"
 
 myWorkspaces = [wsDefault]
 
@@ -238,6 +241,14 @@ projects =
                                  spawnOn wsCode myTerminal
                                  spawnOn wsCode myTerminal
                                  spawnOn wsCode myBrowser
+        }
+
+    , Project
+        { projectName      = wsComs
+        , projectDirectory = "~/"
+        , projectStartHook = Just $ do
+                                 spawnOn wsComs $ myTerminal <> " -t WeeChat -e weechat"
+                                 spawnOn wsComs "slack"
         }
 
     , Project
@@ -398,7 +409,7 @@ myManageHook =
 --                                 Layouts                                {{{
 -----------------------------------------------------------------------------
 
-myLayoutHook = mkToggle1 ZOOM $ tall ||| bsp ||| full
+myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ tall ||| bsp ||| full
 
   where
 
@@ -408,6 +419,8 @@ myLayoutHook = mkToggle1 ZOOM $ tall ||| bsp ||| full
     mySpacing = spacingRaw False defBorder True defBorder True
 
     addTopBar = noFrillsDeco shrinkText topBarTheme
+
+    perWsLayout = onWorkspace wsComs comsLayout
 
     bsp =
         named "BSP"
@@ -434,6 +447,15 @@ myLayoutHook = mkToggle1 ZOOM $ tall ||| bsp ||| full
             $ mkToggle1 REFLECTX
             $ ResizableTall 1 (1 / 200) (11 / 20) []
 
+    comsLayout =
+        named ""
+            $ avoidStruts
+            $ borderResize
+            $ addTopBar
+            $ mySpacing
+            $ mkToggle1 MIRROR
+            $ mkToggle1 REFLECTX
+            $ GridRatio (3/2)
 
 
 
