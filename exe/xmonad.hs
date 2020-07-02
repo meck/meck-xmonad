@@ -183,6 +183,7 @@ myTerminal = "alacritty"
 myBrowser = "firefox"
 myLauncher = "rofi"
 myCalculator = "galculator"
+myProcessViewer = myTerminal <> " --title Htop -e htop"
 rofiClip =
     "rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'"
 
@@ -273,6 +274,7 @@ scratchpads =
     [ NS "Spotify" ("spotify --force-device-scale-factor=" <> show resScaling) (className =? "Spotify") idHook
     , NS "Mpv" "mpv" (className =? "mpv") doFloatVideo
     , NS "Calculator" myCalculator (className =? "Galculator") doFlotTopCenter
+    , NS "Process Viewer" myProcessViewer (title =? "Htop") doFlotTopCenter
     ]
 
 
@@ -588,19 +590,20 @@ myKeys conf = let
         ] ^++^
 
 
-    subKeys "Actions"
-        [ ] ^++^
-
-
     subKeys "Launcher"
          [ ("M-<Space>"             , addName "Launcher"                   $ spawn $ myLauncher <> " -show combi")
          , ("M-C-v"                 , addName "Clipboard"                  $ spawn rofiClip)
          , ("M-<Return>"            , addName "Terminal"                   $ spawn myTerminal)
          , ("M-\\"                  , addName "Browser"                    $ spawn myBrowser)
          , ("<Print>"               , addName "Screenshot"                 $ spawn "flameshot gui")
-         , ("M-m"                   , addName "NSP Spotify"                $ namedScratchpadAction scratchpads "Spotify")
+         ] ^++^
+
+
+    subKeys "Scratchpads"
+         [ ("M-m"                   , addName "NSP Spotify"                $ namedScratchpadAction scratchpads "Spotify")
          , ("M-v"                   , addName "NSP Mpv"                    $ namedScratchpadAction scratchpads "Mpv")
          , ("M-c"                   , addName "NSP Calculator"             $ namedScratchpadAction scratchpads "Calculator")
+         , ("M-t"                   , addName "NSP Processes"              $ namedScratchpadAction scratchpads "Process Viewer")
          ] ^++^
 
 
