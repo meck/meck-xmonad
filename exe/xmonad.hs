@@ -384,6 +384,7 @@ myManageHook =
             , resource =? "stalonetray"           -?> doIgnore
             , isRole =? "GtkFileChooserDialog"    -?> doCenterRect (1/3, 1/2)
             , className =? "lxqt-openssh-askpass" -?> doCenterFloat
+            , title =? "XMonad bindings"          -?> doCenterRect (1/3, 1/2)
             , isDialog                            -?> doCenterFloat
             , isRole =? "pop-up"                  -?> doCenterFloat
             , isInProperty "_NET_WM_WINDOW_TYPE"
@@ -521,13 +522,22 @@ doFloatVideo = doFloatDep $ \(W.RationalRect _ _ w h) ->
 
 myModMask = mod4Mask -- Super
 
-
 showKeybindings :: [((KeyMask, KeySym), NamedAction)] -> NamedAction
 showKeybindings x = addName "Show Keybindings" $ io $ do
-    h <- spawnPipe $ "yad --text-info --fontname=" <> myMonspaceFont
-    hPutStr h (unlines $ showKm x)
-    hClose h
-    return ()
+  h <-
+    spawnPipe $
+      unwords
+        [ "yad",
+          "--no-buttons",
+          "--undecorated",
+          "--title='XMonad bindings'",
+          "--text-info",
+          "--fontname=" <> myMonspaceFont
+        ]
+  hPutStr h $ unlines ["XMonad bindings", "Search with C-s", ""]
+  hPutStr h $ unlines $ showKm x
+  hClose h
+  return ()
 
 
 myKeys conf = let
@@ -581,14 +591,6 @@ myKeys conf = let
     subKeys "Actions"
         [ ] ^++^
 
-    subKeys "Media"
-        [ ("<XF86AudioLowerVolume>" , addName "Lower Volume"               $ spawn "pactl set-sink-mute  @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ -5%")
-        , ("<XF86AudioRaiseVolume>" , addName "Raise Volume"               $ spawn "pactl set-sink-mute  @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ +5%")
-        , ("<XF86AudioMute>"        , addName "Mute"                       $ spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
-        , ("<XF86AudioPlay>"        , addName "Play/Pause"                 $ spawn "playerctl play-pause")
-        , ("<XF86AudioNext>"        , addName "Next"                       $ spawn "playerctl next")
-        , ("<XF86AudioPrev>"        , addName "Prev"                       $ spawn "playerctl previous")
-        ] ^++^
 
     subKeys "Launcher"
          [ ("M-<Space>"             , addName "Launcher"                   $ spawn $ myLauncher <> " -show combi")
@@ -659,6 +661,16 @@ myKeys conf = let
          , ("M-S-r"                 , addName "Reflect"                    $ sendMessage $ Toggle REFLECTX)
          , ("M-y"                   , addName "Toggle float w"             $ withFocused toggleFloat)
          , ("M-S-y"                 , addName "Tile all floating w"        sinkAll)
-         ]
+         ] ^++^
+
+
+    subKeys "Media"
+        [ ("<XF86AudioLowerVolume>" , addName "Lower Volume"               $ spawn "pactl set-sink-mute  @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ -5%")
+        , ("<XF86AudioRaiseVolume>" , addName "Raise Volume"               $ spawn "pactl set-sink-mute  @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ +5%")
+        , ("<XF86AudioMute>"        , addName "Mute"                       $ spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
+        , ("<XF86AudioPlay>"        , addName "Play/Pause"                 $ spawn "playerctl play-pause")
+        , ("<XF86AudioNext>"        , addName "Next"                       $ spawn "playerctl next")
+        , ("<XF86AudioPrev>"        , addName "Prev"                       $ spawn "playerctl previous")
+        ]
 
 -- }}}
