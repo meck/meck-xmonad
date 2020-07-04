@@ -44,6 +44,7 @@ import           XMonad.Hooks.ManageDocks       ( docks
                                                 , avoidStruts
                                                 )
 import           XMonad.Hooks.ManageHelpers
+import           XMonad.Hooks.SetWMName
 
 
 import           XMonad.Layout.BinarySpacePartition
@@ -368,8 +369,9 @@ myLogHook =
 --                                 Startup                                {{{
 -----------------------------------------------------------------------------
 
-myStartupHook = def
-
+-- Some java apps (Quartus II), has issues
+-- with unknown WMs, fake another WM
+myStartupHook = setWMName "LG3D"
 
 
 

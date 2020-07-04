@@ -1,4 +1,3 @@
-# taffybar is broken in 20.03
 { compiler ? "ghc883" }:
 
 let
@@ -13,17 +12,11 @@ let
     scaling = 1.0;
   };
 
-  # all-hies = import
-  #   (fetchTarball "https://github.com/infinisil/all-hies/tarball/haskell.nix")
-  #   { };
-
-  # hie = (all-hies.selection { selector = p: { inherit (p) "ghc883"; }; });
-
   nix-hls = import (pkgs.fetchFromGitHub {
       owner = "poscat0x04";
       repo = "hls-nix";
-      rev = "df53e76a882da8792c44f9fe337fa994ffb29a48";
-      sha256 = "13phk3p7qkwb8mlzqzncxdxmabkswh7hn8h7lqxaxrkhxrv8h5j6";
+      rev = "772f7e76950bf871263898e02c1c2863375ae5a1";
+      sha256 = "0a0wc5di71s0y38zv7ilrwqfmapv14hd4a47545jvzsv96p9g763";
   });
 
   hls = (nix-hls { tag = "master"; version = "8.8.3";}).exes.haskell-language-server;
