@@ -518,7 +518,8 @@ doFloatVideo :: ManageHook
 doFloatVideo = doFloatDep $ \(W.RationalRect _ _ w h) ->
     W.RationalRect (1 - 1 / 16 - w / 3) (1 / 10) (w / 3) (h / 3)
 
-
+-- Change keyboard layout between us and swe
+toggleKeyboard = spawn "(setxkbmap -query | grep -q 'layout:\\s\\+us') && setxkbmap se || setxkbmap us"
 
 --------------------------------------------------------------------------}}}
 --                              Bindings                                  {{{
@@ -589,6 +590,7 @@ myKeys conf = let
         [ ("M-q"                    , addName "Restart XMonad"              $ spawn "xmonad --restart")
         , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt hotPromptTheme  "Quit XMonad" $ io exitSuccess)
         , ("M-'"                    , addName "Shortcuts Menu"              shortcutsPrompt)
+        , ("M-C-<Space>"            , addName "Toggle Keyboard layout"      toggleKeyboard)
         ] ^++^
 
 
