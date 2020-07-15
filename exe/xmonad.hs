@@ -113,6 +113,7 @@ myNav2DConf = def
     { defaultTiledNavigation    = centerNavigation
     , floatNavigation           = centerNavigation
     , screenNavigation          = lineNavigation
+    , unmappedWindowRect        = [("Full", singleWindowRect)]
     }
 
 
@@ -658,8 +659,8 @@ myKeys conf = let
 
 
     subKeys "Layout Management"
-         [ ("M-<Tab>"               , addName "Cycle all layouts"          $ sendMessage NextLayout)
-         , ("M-S-<Tab>"             , addName "Reset layout"               $ setLayout $ XMonad.layoutHook conf)
+         [ ("M-/"                   , addName "Cycle all layouts"          $ sendMessage NextLayout)
+         , ("M-S-/"                 , addName "Reset layout"               $ setLayout $ XMonad.layoutHook conf)
          , ("M-="                   , addName "Increace Window Spacing"    $ incScreenWindowSpacing 5)
          , ("M--"                   , addName "Decreace Window Spacing"    $ decScreenWindowSpacing 5)
          , ("M-0"                   , addName "Toogle Window Spacing"      $ toggleScreenSpacingEnabled >> toggleWindowSpacingEnabled)

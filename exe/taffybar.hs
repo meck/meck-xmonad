@@ -19,7 +19,6 @@ import           Colors.Nord
 main :: IO ()
 main =
     startTaffybar
-        $ withBatteryRefresh
         $ withLogServer
         $ withToggleServer
         $ toTaffyConfig myConfig
@@ -30,7 +29,7 @@ main =
                               : map (>>= buildContentsBox) [layout, windowsW]
         , endWidgets    = map
                               (>>= buildContentsBox)
-                              [clock, batteryIconNew, tray, mpris2New]
+                              [clock, tray, mpris2New]
         , barPosition   = Top
         , barPadding    = 0
         , barHeight     = 30
