@@ -9,6 +9,7 @@
 import           Control.Arrow                  ( first )
 import           Data.List                      ( delete
                                                 , intercalate
+                                                , isPrefixOf
                                                 )
 import qualified Data.Map                      as M
 import           System.Exit
@@ -385,17 +386,21 @@ myManageHook =
     namedScratchpadManageHook scratchpads <> addShadows <> manageSpecific
   where
         manageSpecific = composeOne
-            [ resource =? "desktop_window"        -?> doIgnore
-            , resource =? "stalonetray"           -?> doIgnore
-            , isRole =? "GtkFileChooserDialog"    -?> doCenterRect (1/3, 1/2)
-            , className =? "lxqt-openssh-askpass" -?> doCenterFloat
-            , title =? "XMonad bindings"          -?> doCenterRect (1/3, 1/2)
-            , isDialog                            -?> doCenterFloat
-            , isRole =? "pop-up"                  -?> doCenterFloat
+            [ resource =? "desktop_window"         -?> doIgnore
+            -- , resource =? "stalonetray"            -?> doIgnore
+            , isRole =? "GtkFileChooserDialog"     -?> doCenterRect (1/3, 1/2)
+            , title =? "XMonad bindings"           -?> doCenterRect (1/3, 1/2)
+            , className =? "lxqt-openssh-askpass"  -?> doCenterFloat
+            , className =? "Nm-connection-editor"  -?> doCenterFloat
+            , className =? "Pavucontrol"           -?> doCenterFloat
+            , className =? "Paprefs"               -?> doCenterFloat
+            , isPrefixOf ".blueman-" <$> className -?> doCenterFloat
+            , isDialog                             -?> doCenterFloat
+            , isRole =? "pop-up"                   -?> doCenterFloat
             , isInProperty "_NET_WM_WINDOW_TYPE"
                            "_NET_WM_WINDOW_TYPE_SPLASH" -?> doCenterFloat
-            , isFullscreen                        -?> doFullFloat
-            , pure True                           -?> tileBelow
+            , isFullscreen                         -?> doFullFloat
+            , pure True                            -?> tileBelow
             ]
 
         tileBelow = insertPosition Below Newer
