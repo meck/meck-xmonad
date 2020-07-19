@@ -48,7 +48,6 @@ workspaces = workspacesNew $ defaultWorkspacesConfig
     , underlinePadding    = 1
     , labelSetter         = myLabelSetter
     , getWindowIconPixbuf = defaultGetWindowIconPixbuf
-    -- , getWindowIconPixbuf = unscaledDefaultGetWindowIconPixbuf
     }
   where
     myLabelSetter w = pure $ show (n + 1) <> ": " <> T.unpack name

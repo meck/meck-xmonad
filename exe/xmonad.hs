@@ -185,7 +185,7 @@ topBarTheme = def { activeColor         = active
 myTerminal = "alacritty"
 myBrowser = "firefox"
 myLauncher = "rofi"
-myCalculator = "galculator"
+myCalculator = "rofi-calc"
 myProcessViewer = myTerminal <> " --title Htop -e htop"
 rofiClip =
     "rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'"
@@ -198,7 +198,6 @@ rofiClip =
 
 shortcutsCmds = [ ("v" , "Fetch from clipboard" , spawn rofiClip)
                 , ("n" , "Network config"       , spawn "networkmanager_dmenu")
-                , ("c" , "Rofi Calculator"      , spawn "rofi-calc")
                 ]
 
 -- Display a prompt with hotkeys
@@ -276,7 +275,7 @@ projects =
 scratchpads =
     [ NS "Spotify" ("spotify --force-device-scale-factor=" <> show resScaling) (className =? "Spotify") idHook
     , NS "Mpv" "mpv --idle=once --force-window=yes" (className =? "mpv") doFloatVideo
-    , NS "Calculator" myCalculator (className =? "Galculator") doFlotTopCenter
+    , NS "Calculator" "galculator" (className =? "Galculator") doFlotTopCenter
     , NS "Process Viewer" myProcessViewer (title =? "Htop") doFlotTopCenter
     ]
 
@@ -525,7 +524,7 @@ doFloatVideo = doFloatDep $ \(W.RationalRect _ _ w h) ->
     W.RationalRect (1 - 1 / 16 - w / 3) (1 / 10) (w / 3) (h / 3)
 
 -- Change keyboard layout between us and swe
-toggleKeyboard = spawn "(setxkbmap -query | grep -q 'layout:\\s\\+us') && setxkbmap se || setxkbmap us"
+toggleKeyboard = spawn "switch-keyboard-layout"
 
 --------------------------------------------------------------------------}}}
 --                              Bindings                                  {{{
@@ -596,7 +595,7 @@ myKeys conf = let
         [ ("M-q"                    , addName "Restart XMonad"              $ spawn "xmonad --restart")
         , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt hotPromptTheme  "Quit XMonad" $ io exitSuccess)
         , ("M-'"                    , addName "Shortcuts Menu"              shortcutsPrompt)
-        , ("M-C-<Space>"            , addName "Toggle Keyboard layout"      toggleKeyboard)
+        , ("M1-<Space>"             , addName "Toggle Keyboard layout"      toggleKeyboard)
         ] ^++^
 
 
@@ -606,13 +605,13 @@ myKeys conf = let
          , ("M-<Return>"            , addName "Terminal"                   $ spawn myTerminal)
          , ("M-\\"                  , addName "Browser"                    $ spawn myBrowser)
          , ("<Print>"               , addName "Screenshot"                 $ spawn "flameshot gui")
+         , ("M-n"                   , addName "Calculator"                 $ spawn myCalculator)
          ] ^++^
 
 
     subKeys "Scratchpads"
          [ ("M-m"                   , addName "NSP Spotify"                $ namedScratchpadAction scratchpads "Spotify")
          , ("M-v"                   , addName "NSP Mpv"                    $ namedScratchpadAction scratchpads "Mpv")
-         , ("M-c"                   , addName "NSP Calculator"             $ namedScratchpadAction scratchpads "Calculator")
          , ("M-t"                   , addName "NSP Processes"              $ namedScratchpadAction scratchpads "Process Viewer")
          ] ^++^
 
