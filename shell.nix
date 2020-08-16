@@ -2,35 +2,27 @@
 
 let
   nixpkgs = import ./nixpkgs.nix;
-
-  pkgs = import nixpkgs { config = { }; };
-
+  pkgs = import nixpkgs { };
   myHaskellPackages = pkgs.haskell.packages.${compiler};
+
+  nixpkgs_with_hls = builtins.fetchTarball {
+    name = "nixos-unstable-2020-08-10";
+    url =
+      "https://github.com/nixos/nixpkgs/archive/32b46dd897ab2143a609988a04d87452f0bbef59.tar.gz";
+    sha256 = "1gzfrpjnr1bz9zljsyg3a4zrhk8r927sz761mrgcg56dwinkhpjk";
+  };
+
+  hls = (import nixpkgs_with_hls
+    { }).haskell.packages.${compiler}.haskell-language-server;
+
   drv = pkgs.callPackage ./derivation.nix {
     pkgs = pkgs;
     compiler = compiler;
     scaling = 1.0;
   };
 
-  nix-hls = import (pkgs.fetchFromGitHub {
-      owner = "poscat0x04";
-      repo = "hls-nix";
-      rev = "772f7e76950bf871263898e02c1c2863375ae5a1";
-      sha256 = "0a0wc5di71s0y38zv7ilrwqfmapv14hd4a47545jvzsv96p9g763";
-  });
-
-  hls = (nix-hls { tag = "master"; version = "8.8.3";}).exes.haskell-language-server;
-
 in myHaskellPackages.shellFor {
   packages = pkgs: [ drv myHaskellPackages.cabal-install ];
   withHoogle = true;
-  nativeBuildInputs = with myHaskellPackages; [
-    # hie
-    hls
-    ormolu
-    brittany
-    weeder
-    cabal-install
-  ];
-
+  nativeBuildInputs = with myHaskellPackages; [ hls cabal-install ];
 }
