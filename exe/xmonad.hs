@@ -62,6 +62,7 @@ import           XMonad.Layout.Reflect
 import           XMonad.Layout.Renamed
 import           XMonad.Layout.ResizableTile
 import           XMonad.Layout.Spacing
+import           XMonad.Layout.ThreeColumns
 
 
 import           XMonad.Prompt
@@ -132,7 +133,7 @@ resScaling = 1.0
 scaleRes :: Integer -> Dimension
 scaleRes = floor . ( resScaling * ) . realToFrac
 
-defaultSpacing = toInteger $ scaleRes 10
+defaultSpacing = toInteger $ scaleRes 5
 
 myFont = "xft:Roboto"
 
@@ -419,7 +420,7 @@ myManageHook =
 --                                 Layouts                                {{{
 -----------------------------------------------------------------------------
 
-myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ tall ||| bsp ||| full
+myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ tall ||| threeCol ||| bsp ||| full
 
   where
 
@@ -456,6 +457,16 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ tall ||| bsp ||| full
             $ mkToggle1 MIRROR
             $ mkToggle1 REFLECTX
             $ ResizableTall 1 (1 / 200) (11 / 20) []
+
+    threeCol =
+        named "Columns"
+            $ avoidStruts
+            $ borderResize
+            $ addTopBar
+            $ mkToggle1 MIRROR
+            $ mkToggle1 REFLECTX
+            $ mySpacing
+            $ ThreeColMid 1 (1 / 200) (7 / 16)
 
     comsLayout =
         named ""
