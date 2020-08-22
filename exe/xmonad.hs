@@ -133,7 +133,7 @@ resScaling = 1.0
 scaleRes :: Integer -> Dimension
 scaleRes = floor . ( resScaling * ) . realToFrac
 
-defaultSpacing = toInteger $ scaleRes 5
+defaultSpacing = toInteger $ scaleRes 7
 
 myFont = "xft:Roboto"
 
@@ -394,6 +394,7 @@ myManageHook =
             , className =? "Nm-connection-editor"  -?> doCenterFloat
             , className =? "Pavucontrol"           -?> doCenterFloat
             , className =? "Paprefs"               -?> doCenterFloat
+            , className =? "pinentry"              -?> doCenterFloat
             , isPrefixOf ".blueman-" <$> className -?> doCenterFloat
             , isDialog                             -?> doCenterFloat
             , isRole =? "pop-up"                   -?> doCenterFloat
