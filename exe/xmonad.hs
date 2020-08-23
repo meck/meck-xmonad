@@ -387,25 +387,27 @@ myManageHook =
   where
         manageSpecific = composeOne
             [ resource =? "desktop_window"         -?> doIgnore
-            -- , resource =? "stalonetray"            -?> doIgnore
             , isRole =? "GtkFileChooserDialog"     -?> doCenterRect (1/3, 1/2)
             , title =? "XMonad bindings"           -?> doCenterRect (1/3, 1/2)
             , className =? "lxqt-openssh-askpass"  -?> doCenterFloat
             , className =? "Nm-connection-editor"  -?> doCenterFloat
             , className =? "Pavucontrol"           -?> doCenterFloat
             , className =? "Paprefs"               -?> doCenterFloat
-            , className =? "pinentry"              -?> doCenterFloat
+            , className =? "Pinentry"              -?> doCenterFloat
             , isPrefixOf ".blueman-" <$> className -?> doCenterFloat
             , isDialog                             -?> doCenterFloat
             , isRole =? "pop-up"                   -?> doCenterFloat
-            , isInProperty "_NET_WM_WINDOW_TYPE"
-                           "_NET_WM_WINDOW_TYPE_SPLASH" -?> doCenterFloat
+            , isType "_NET_WM_WINDOW_TYPE_SPLASH"  -?> doCenterFloat
+            , isState "_NET_WM_STATE_ABOVE"        -?> doCenterFloat
             , isFullscreen                         -?> doFullFloat
             , pure True                            -?> tileBelow
             ]
 
         tileBelow = insertPosition Below Newer
+
         isRole = stringProperty "WM_WINDOW_ROLE"
+        isType = isInProperty "_NET_WM_WINDOW_TYPE"
+        isState = isInProperty "_NET_WM_STATE"
 
         addShadows :: ManageHook
         addShadows = composeAll [ className =? c --> go | c <- shadowApps ]
