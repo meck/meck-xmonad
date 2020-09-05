@@ -275,7 +275,7 @@ projects =
 -- dynamicTitle event hook to position the window
 scratchpads =
     [ NS "Spotify" ("spotify --force-device-scale-factor=" <> show resScaling) (className =? "Spotify") idHook
-    , NS "Mpv" "mpv --idle=once --force-window=yes" (className =? "mpv") doFloatVideo
+    , NS "Mpv" "mpv --idle=yes --force-window=yes" (className =? "mpv") doFloatVideo
     , NS "Calculator" "galculator" (className =? "Galculator") doFlotTopCenter
     , NS "Process Viewer" myProcessViewer (title =? "Htop") doFlotTopCenter
     ]
