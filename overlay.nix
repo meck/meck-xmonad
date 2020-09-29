@@ -5,26 +5,11 @@ self: super: {
   haskellPackages = with self.haskell.lib;
     super.haskellPackages.extend (hself: hsuper: {
 
-      gi-cairo-render = markUnbroken (overrideCabal (hsuper.gi-cairo-render)
-        (drv: {
-          src = self.fetchFromGitHub {
-            owner = "thestr4ng3r";
-            repo = "gi-cairo-render";
-            rev = "8727c43cdf91aeedffc9cb4c5575f56660a86399";
-            sha256 = "16kqh2ck0dad1l4m6q9xs5jqj9q0vgpqrzb2dc90jk8xwslmmhxd";
-          };
-          editedCabalFile = null;
-          postUnpack = ''
-            mv source all
-            mv all/gi-cairo-render source
-          '';
-        }));
+      gi-cairo-render = markUnbroken (hself.gi-cairo-render_0_1_0);
 
       gi-dbusmenu = markUnbroken (hself.gi-dbusmenu_0_4_8);
 
       gi-dbusmenugtk3 = markUnbroken (hself.gi-dbusmenugtk3_0_4_9);
-
-      # gi-gdk = hself.gi-gdk_3_0_23;
 
       gi-gdkx11 = markUnbroken (overrideSrc hsuper.gi-gdkx11 {
         src = self.fetchurl {
@@ -37,7 +22,7 @@ self: super: {
 
       gi-gtk-hs = markUnbroken (hself.gi-gtk-hs_0_3_9);
 
-      gi-cairo-connector = markUnbroken (hsuper.gi-cairo-connector);
+      gi-cairo-connector = markUnbroken (hself.gi-cairo-connector_0_1_0);
 
       gi-xlib = markUnbroken (hself.gi-xlib_2_0_9);
 
@@ -51,8 +36,6 @@ self: super: {
           rev = "cc8d4608c26f9989cc3879bbbc6c2835b9648015";
           sha256 = "0ccg8fi262cy0hw2pahciaw05bycl9lav01bw4rqgjwiyhbkxnpa";
         }) { };
-
-      # gtk-strut = markUnbroken (hsuper.gtk-strut);
 
       taffybar = markUnbroken (appendPatch hsuper.taffybar (self.fetchpatch {
         url =
