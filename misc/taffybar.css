@@ -58,7 +58,7 @@
 	padding-top: 5px;
 	padding-right: 5px;
 	padding-left: 2px;
-	transition: background-color .3s;
+	transition: background-color .1s;
 	/* border-radius: 5px; */
 }
 
@@ -93,17 +93,19 @@
 }
 
 .window-icon-container {
-	transition: opacity .3s, box-shadow .3s, background-color .3s;
+	transition: opacity .1s, box-shadow .1s, background-color .1s;
 	opacity: 1;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .window-icon-container.active {
-        background-color: @nord3;
+  background-color: @nord3;
 	box-shadow: inset 0 2px @nord10;
 }
 
 .window-icon-container.urgent {
-        background-color: @nord3;
+  background-color: @nord3;
 	box-shadow: inset 0 2px @urgent-window-color;
 }
 
@@ -116,8 +118,8 @@
 }
 
 .window-icon {
-        padding-left: 4px;
-        padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
 	opacity: 1;
 	transition: opacity .4s;
 }

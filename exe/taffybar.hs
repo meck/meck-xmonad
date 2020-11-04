@@ -56,7 +56,7 @@ workspaces = workspacesNew $ defaultWorkspacesConfig
         isActive        = workspaceState w == Active
         name =
             (if isActive
-                    then markText [Foreground nord10, FontWeight 700]
+                    then markText [Foreground nord10]
                     else id
                 )
                 $ T.pack
