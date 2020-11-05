@@ -423,7 +423,7 @@ myManageHook =
 --                                 Layouts                                {{{
 -----------------------------------------------------------------------------
 
-myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ tall ||| threeCol ||| bsp ||| full
+myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
 
   where
 
