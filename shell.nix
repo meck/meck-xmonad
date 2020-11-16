@@ -1,7 +1,6 @@
 { pkgs ? (import ./nixpkgs.nix), compiler ? "default" }:
 let
 
-  # pkgs = import ./nixpkgs.nix;
   myHaskellPkgs = if compiler == "default" then
     pkgs.haskellPackages
   else
