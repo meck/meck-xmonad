@@ -39,6 +39,7 @@ import           XMonad.Hooks.DynamicProperty
 import           XMonad.Hooks.EwmhDesktops      ( ewmh
                                                 , ewmhDesktopsLogHookCustom
                                                 , ewmhDesktopsEventHookCustom
+                                                , fullscreenEventHook
                                                 )
 import           XMonad.Hooks.InsertPosition
 import           XMonad.Hooks.ManageDocks       ( docks
@@ -286,7 +287,11 @@ scratchpads =
 --                                 Events                                 {{{
 -----------------------------------------------------------------------------
 
-myEventHook = disableMFFHook <> spotifyFloatHook <> modifyWSPorderHook
+myEventHook =
+  disableMFFHook
+    <> fullscreenEventHook
+    <> spotifyFloatHook
+    <> modifyWSPorderHook
   where
 
     -- Disable mouse follows focus for these layouts
