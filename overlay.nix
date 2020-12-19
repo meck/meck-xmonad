@@ -12,10 +12,6 @@ self: super: {
           sha256 = "0ccg8fi262cy0hw2pahciaw05bycl9lav01bw4rqgjwiyhbkxnpa";
         }) { };
 
-      taffybar = markUnbroken (appendPatch hsuper.taffybar (self.fetchpatch {
-        url =
-          "https://github.com/taffybar/taffybar/pull/494/commits/a7443324a549617f04d49c6dfeaf53f945dc2b98.patch";
-        sha256 = "0prskimfpapgncwc8si51lf0zxkkdghn33y3ysjky9a82dsbhcqi";
-      }));
+      taffybar = markUnbroken hsuper.taffybar;
     });
 }
