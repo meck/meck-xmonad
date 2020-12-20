@@ -137,44 +137,44 @@ scaleRes = floor . ( resScaling * ) . realToFrac
 defaultSpacing = toInteger $ scaleRes 7
 
 myFont = "xft:Roboto"
+-- myMonospaceFont = "xft:Iosevka"
 
 fontW :: Integer -> String -> String
 fontW w = (<> ":weight=" <> show w)
 
-myMonspaceFont = "xft:Iosevka"
-
-fgCol    = hexCol nord4
-lightBg  = hexCol nord2
-active   = hexCol nord10
-inactive = hexCol nord3
-urgent   = hexCol nord12
-critical = hexCol nord11
+fgCol       = hexCol nord4
+bgCol       = hexCol nord1
+accentCol   = hexCol nord7
+activeCol   = hexCol nord10
+inactiveCol = hexCol nord3
+urgentCol   = hexCol nord12
+criticalCol = hexCol nord11
 
 myPromptTheme :: XPConfig
-myPromptTheme = def { font              = fontW 300 myFont
-                    , bgColor           = lightBg
+myPromptTheme = def { font              = fontW 100 myFont
+                    , bgColor           = bgCol
                     , fgColor           = fgCol
-                    , fgHLight          = active
-                    , bgHLight          = lightBg
-                    , promptBorderWidth = scaleRes 0
-                    , height            = scaleRes 30
-                    , position          = Top
+                    , fgHLight          = activeCol
+                    , bgHLight          = bgCol
+                    , borderColor       = accentCol
+                    , maxComplRows      = Just 10
+                    , promptBorderWidth = scaleRes 2
+                    , height            = scaleRes 55
+                    , position          = CenteredAt 0.33 0.33
                     }
 
-hotPromptTheme = myPromptTheme { fgColor = critical
-                               , font    = fontW 700 myFont
-                               }
+hotPromptTheme = myPromptTheme { borderColor = criticalCol }
 
-topBarTheme = def { activeColor         = active
-                  , inactiveColor       = inactive
-                  , urgentColor         = urgent
+topBarTheme = def { activeColor         = activeCol
+                  , inactiveColor       = inactiveCol
+                  , urgentColor         = urgentCol
                   , activeBorderWidth   = scaleRes 0
                   , inactiveBorderWidth = scaleRes 0
                   , urgentBorderWidth   = scaleRes 0
                   , fontName            = myFont
-                  , activeTextColor     = active
-                  , inactiveTextColor   = inactive
-                  , urgentTextColor     = urgent
+                  , activeTextColor     = activeCol
+                  , inactiveTextColor   = inactiveCol
+                  , urgentTextColor     = urgentCol
                   , decoHeight          = scaleRes 10
                   }
 
@@ -334,9 +334,9 @@ myLogHook =
     -- Reorder the workspaces using DynamicWorkspaceOrder and
     -- remove NSP workspace from whats sent to taffybar.
     -- Used by TB for selecting workspaces.
-    modifyWSPorderHook =
-        (ewmhDesktopsLogHookCustom . (namedScratchpadFilterOutWorkspace .))
-            =<< DO.getSortByOrder
+    modifyWSPorderHook = do
+        ordS <- DO.getSortByOrder
+        ewmhDesktopsLogHookCustom (ordS . namedScratchpadFilterOutWorkspace)
 
 
     -- Add a tag to inform the composer
@@ -557,11 +557,10 @@ showKeybindings x = addName "Show Keybindings" $ io $ do
     spawnPipe $
       unwords
         [ "yad",
-          "--no-buttons",
-          "--undecorated",
           "--title='XMonad bindings'",
+          "--no-buttons",
           "--text-info",
-          "--fontname=" <> myMonspaceFont
+          "--close-on-unfocus"
         ]
   hPutStr h $ unlines ["XMonad bindings", "Search with C-s", ""]
   hPutStr h $ unlines $ showKm x
@@ -612,7 +611,7 @@ myKeys conf = let
 
     subKeys "System"
         [ ("M-q"                    , addName "Restart XMonad"              $ spawn "xmonad --restart")
-        , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt hotPromptTheme  "Quit XMonad" $ io exitSuccess)
+        , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt hotPromptTheme  "quit XMonad" $ io exitSuccess)
         , ("M-'"                    , addName "Shortcuts Menu"              shortcutsPrompt)
         , ("M1-<Space>"             , addName "Toggle Keyboard layout"      toggleKeyboard)
         ] ^++^
