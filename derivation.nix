@@ -10,13 +10,10 @@ let
 
 in pkgs.haskell.lib.overrideCabal drv (old: {
 
-  # Change xmonad.hs to sopport
-  # hidpi
+  # Change xmonad.hs to support hidpi
   postConfigure =
     "substituteInPlace exe/xmonad.hs --replace 'resScaling = 1.0' 'resScaling = ${
       toString scaling
     }'";
 
-  # taffybar css file
-  postInstall = "cp misc/taffybar.css $out/taffybar.css";
 })

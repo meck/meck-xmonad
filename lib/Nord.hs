@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
-module Colors.Nord where
+module Nord where
 
 import           Numeric                        ( showHex )
 

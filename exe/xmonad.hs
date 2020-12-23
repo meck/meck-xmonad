@@ -16,9 +16,6 @@ import           System.Exit
 import           System.IO
 import           Text.ParserCombinators.ReadP   ( readP_to_S )
 
-import           System.Taffybar.Support.PagerHints
-                                                ( pagerHints )
-
 import           XMonad
 
 
@@ -78,7 +75,9 @@ import           XMonad.Util.NamedActions
 import           XMonad.Util.NamedScratchpad
 import           XMonad.Util.Run
 
-import           Colors.Nord
+import           Nord
+import           PagerHints ( pagerHints )
+
 
 
 --------------------------------------------------------------------------}}}
@@ -315,7 +314,7 @@ myEventHook =
 
 
     -- Reorder the workspaces using DynamicWorkspaceOrder and
-    -- remove NSP workspace from whats sent to taffybar.
+    -- remove NSP workspace from whats sent to polybar.
     -- Used by TB for clicking workspaces.
     modifyWSPorderHook e = do
         ordS <- DO.getSortByOrder
@@ -332,7 +331,7 @@ myLogHook =
 
 
     -- Reorder the workspaces using DynamicWorkspaceOrder and
-    -- remove NSP workspace from whats sent to taffybar.
+    -- remove NSP workspace from whats sent to polybar.
     -- Used by TB for selecting workspaces.
     modifyWSPorderHook = do
         ordS <- DO.getSortByOrder
