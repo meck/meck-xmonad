@@ -197,7 +197,8 @@ rofiClip =
 --                                Shortcut Prompt                         {{{
 -----------------------------------------------------------------------------
 
-shortcutsCmds = [ ("v" , "Fetch from clipboard" , spawn rofiClip)
+shortcutsCmds = [ ("a" , "Autorandr" ,            spawn "rofi-autorandr")
+                , ("v" , "Fetch from clipboard" , spawn rofiClip)
                 , ("n" , "Network config"       , spawn "networkmanager_dmenu")
                 ]
 
@@ -432,13 +433,10 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
   where
 
     named x = renamed [Replace x]
-
     defBorder = Border defaultSpacing defaultSpacing defaultSpacing defaultSpacing
     mySpacing = spacingRaw False defBorder True defBorder True
-
     addTopBar = noFrillsDeco shrinkText topBarTheme
-
-    perWsLayout = onWorkspace wsComs comsLayout
+    perWsLayout = onWorkspace wsComs $ comsLayout ||| full
 
     bsp =
         named "BSP"
@@ -449,11 +447,9 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
             $ mkToggle1 REFLECTX
             $ mySpacing emptyBSP
 
-
     full =
         named "Full"
             $ avoidStruts Full
-
 
     tall =
         named "Tall"
@@ -476,7 +472,7 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
             $ ThreeColMid 1 (1 / 200) (7 / 16)
 
     comsLayout =
-        named ""
+        named "Coms"
             $ avoidStruts
             $ borderResize
             $ addTopBar
