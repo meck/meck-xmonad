@@ -235,7 +235,7 @@ wsConf    = "nix Config"
 wsCode    = "code"
 wsComs    = "coms"
 
-myWorkspaces = [wsDefault]
+myWorkspaces = [wsDefault, wsComs]
 
 projects =
 

@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> { }, compiler ? "default", scaling }:
+{ pkgs, compiler ? "default", scaling }:
 let
 
   myHaskellPkgs = if compiler == "default" then

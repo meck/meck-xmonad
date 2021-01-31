@@ -1,5 +1,7 @@
-{ pkgs ? (import ./nixpkgs.nix), compiler ? "default" }:
+{ usePinned ? false, compiler ? "default" }:
 let
+
+  pkgs = if usePinned then import ./nixpkgs.nix else import <nixpkgs> { };
 
   myHaskellPkgs = if compiler == "default" then
     pkgs.haskellPackages
