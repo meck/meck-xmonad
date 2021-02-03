@@ -135,7 +135,7 @@ scaleRes = floor . ( resScaling * ) . realToFrac
 
 defaultSpacing = toInteger $ scaleRes 7
 
-myFont = "xft:Roboto"
+myFont = "xft:Roboto Condensed"
 -- myMonospaceFont = "xft:Iosevka"
 
 fontW :: Integer -> String -> String
@@ -143,7 +143,7 @@ fontW w = (<> ":weight=" <> show w)
 
 fgCol       = hexCol nord4
 bgCol       = hexCol nord1
-accentCol   = hexCol nord7
+accentCol   = hexCol nord9
 activeCol   = hexCol nord10
 inactiveCol = hexCol nord3
 urgentCol   = hexCol nord12
@@ -174,7 +174,7 @@ topBarTheme = def { activeColor         = activeCol
                   , activeTextColor     = activeCol
                   , inactiveTextColor   = inactiveCol
                   , urgentTextColor     = urgentCol
-                  , decoHeight          = scaleRes 10
+                  , decoHeight          = scaleRes 7
                   }
 
 
@@ -609,6 +609,13 @@ myKeys conf = let
         , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt hotPromptTheme  "quit XMonad" $ io exitSuccess)
         , ("M-'"                    , addName "Shortcuts Menu"              shortcutsPrompt)
         , ("M1-<Space>"             , addName "Toggle Keyboard layout"      toggleKeyboard)
+        , ("<Pause>"                , addName "Increase Monitor Backlight"  $ spawn "backlight inc")
+        , ("<Scroll_lock>"          , addName "Decrease Monitor Backlight"  $ spawn "backlight dec")
+        ] ^++^
+
+
+    subKeys "Launcher"
+         [ ("M-<Space>"             , addName "Launcher"                   $ spawn $ myLauncher <> " -show combi")
         ] ^++^
 
 
