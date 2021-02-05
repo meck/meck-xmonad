@@ -133,7 +133,7 @@ resScaling = 1.0
 scaleRes :: Integer -> Dimension
 scaleRes = floor . ( resScaling * ) . realToFrac
 
-defaultSpacing = toInteger $ scaleRes 7
+defaultSpacing = toInteger $ scaleRes 14
 
 myFont = "xft:Roboto Condensed"
 -- myMonospaceFont = "xft:Iosevka"
