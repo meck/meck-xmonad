@@ -1,4 +1,6 @@
 cradle:
   cabal:
-    - path: "./exe/xmonad.hs"
+    - path: "./exe"
+      component: "meck-xmonad:exe:xmonad"
+    - path: "./lib"
       component: "meck-xmonad:exe:xmonad"

@@ -54,7 +54,6 @@ import           XMonad.Layout.Grid
 import           XMonad.Layout.MagicFocus
 import           XMonad.Layout.MultiToggle
 import           XMonad.Layout.MultiToggle.Instances
-import           XMonad.Layout.NoFrillsDecoration
 import           XMonad.Layout.PerWorkspace
 import           XMonad.Layout.Reflect
 import           XMonad.Layout.Renamed
@@ -77,6 +76,7 @@ import           XMonad.Util.Run
 
 import           Nord
 import           PagerHints ( pagerHints )
+import           SideDecoration
 
 
 
@@ -136,7 +136,6 @@ scaleRes = floor . ( resScaling * ) . realToFrac
 defaultSpacing = toInteger $ scaleRes 14
 
 myFont = "xft:Roboto Condensed"
--- myMonospaceFont = "xft:Iosevka"
 
 fontW :: Integer -> String -> String
 fontW w = (<> ":weight=" <> show w)
@@ -164,18 +163,19 @@ myPromptTheme = def { font              = fontW 100 myFont
 
 hotPromptTheme = myPromptTheme { borderColor = criticalCol }
 
-topBarTheme = def { activeColor         = activeCol
-                  , inactiveColor       = inactiveCol
-                  , urgentColor         = urgentCol
-                  , activeBorderWidth   = scaleRes 0
-                  , inactiveBorderWidth = scaleRes 0
-                  , urgentBorderWidth   = scaleRes 0
-                  , fontName            = myFont
-                  , activeTextColor     = activeCol
-                  , inactiveTextColor   = inactiveCol
-                  , urgentTextColor     = urgentCol
-                  , decoHeight          = scaleRes 7
-                  }
+decoBarTheme = def { activeColor         = activeCol
+                   , inactiveColor       = inactiveCol
+                   , urgentColor         = urgentCol
+                   , activeBorderWidth   = scaleRes 0
+                   , inactiveBorderWidth = scaleRes 0
+                   , urgentBorderWidth   = scaleRes 0
+                   , fontName            = myFont
+                   , activeTextColor     = activeCol
+                   , inactiveTextColor   = inactiveCol
+                   , urgentTextColor     = urgentCol
+                   , decoHeight          = scaleRes 7
+                   , decoWidth           = scaleRes 12
+                   }
 
 
 
@@ -435,14 +435,14 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
     named x = renamed [Replace x]
     defBorder = Border defaultSpacing defaultSpacing defaultSpacing defaultSpacing
     mySpacing = spacingRaw False defBorder True defBorder True
-    addTopBar = noFrillsDeco shrinkText topBarTheme
+    addDecoBar = decoration shrinkText decoBarTheme $ SideDecoration L
     perWsLayout = onWorkspace wsComs $ comsLayout ||| full
 
     bsp =
         named "BSP"
             $ avoidStruts
             $ borderResize
-            $ addTopBar
+            $ addDecoBar
             $ mkToggle1 MIRROR
             $ mkToggle1 REFLECTX
             $ mySpacing emptyBSP
@@ -455,7 +455,7 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
         named "Tall"
             $ avoidStruts
             $ borderResize
-            $ addTopBar
+            $ addDecoBar
             $ mySpacing
             $ mkToggle1 MIRROR
             $ mkToggle1 REFLECTX
@@ -465,7 +465,7 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
         named "Columns"
             $ avoidStruts
             $ borderResize
-            $ addTopBar
+            $ addDecoBar
             $ mkToggle1 MIRROR
             $ mkToggle1 REFLECTX
             $ mySpacing
@@ -475,7 +475,7 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
         named "Coms"
             $ avoidStruts
             $ borderResize
-            $ addTopBar
+            $ addDecoBar
             $ mySpacing
             $ mkToggle1 MIRROR
             $ mkToggle1 REFLECTX
