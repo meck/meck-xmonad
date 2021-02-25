@@ -133,7 +133,7 @@ resScaling = 1.0
 scaleRes :: Integer -> Dimension
 scaleRes = floor . ( resScaling * ) . realToFrac
 
-defaultSpacing = toInteger $ scaleRes 14
+defaultSpacing = toInteger $ scaleRes 17
 
 myFont = "xft:Roboto Condensed"
 
@@ -166,14 +166,14 @@ hotPromptTheme = myPromptTheme { borderColor = criticalCol }
 decoBarTheme = def { activeColor         = activeCol
                    , inactiveColor       = inactiveCol
                    , urgentColor         = urgentCol
-                   , activeBorderWidth   = scaleRes 0
-                   , inactiveBorderWidth = scaleRes 0
-                   , urgentBorderWidth   = scaleRes 0
+                   , activeBorderWidth   = 0
+                   , inactiveBorderWidth = 0
+                   , urgentBorderWidth   = 0
                    , fontName            = myFont
                    , activeTextColor     = activeCol
                    , inactiveTextColor   = inactiveCol
                    , urgentTextColor     = urgentCol
-                   , decoHeight          = scaleRes 7
+                   , decoHeight          = scaleRes 8
                    , decoWidth           = scaleRes 12
                    }
 
@@ -235,7 +235,7 @@ wsConf    = "nix Config"
 wsCode    = "code"
 wsComs    = "coms"
 
-myWorkspaces = [wsDefault, wsComs]
+myWorkspaces = [wsDefault]
 
 projects =
 
@@ -435,7 +435,7 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
     named x = renamed [Replace x]
     defBorder = Border defaultSpacing defaultSpacing defaultSpacing defaultSpacing
     mySpacing = spacingRaw False defBorder True defBorder True
-    addDecoBar = decoration shrinkText decoBarTheme $ SideDecoration L
+    addDecoBar = decoration shrinkText decoBarTheme $ SideDecoration U
     perWsLayout = onWorkspace wsComs $ comsLayout ||| full
 
     bsp =
