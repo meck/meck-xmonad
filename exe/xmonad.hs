@@ -156,7 +156,7 @@ myPromptTheme = def { font              = fontW 100 myFont
                     , bgHLight          = bgCol
                     , borderColor       = accentCol
                     , maxComplRows      = Just 10
-                    , promptBorderWidth = scaleRes 2
+                    , promptBorderWidth = 1
                     , height            = scaleRes 55
                     , position          = CenteredAt 0.33 0.33
                     }
