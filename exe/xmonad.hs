@@ -1,5 +1,5 @@
+-- vim: set foldmethod=marker foldlevel=1 :
 -- Imports                                      {{{
--- vim: set foldmarker={{{,}}} foldmethod=marker foldlevel=1 :
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -391,21 +391,22 @@ myManageHook =
     namedScratchpadManageHook scratchpads <> addShadows <> manageSpecific
   where
         manageSpecific = composeOne
-            [ resource =? "desktop_window"         -?> doIgnore
-            , isRole =? "GtkFileChooserDialog"     -?> doCenterRect (1/3, 1/2)
-            , title =? "XMonad bindings"           -?> doCenterRect (1/3, 1/2)
-            , className =? "lxqt-openssh-askpass"  -?> doCenterFloat
-            , className =? "Nm-connection-editor"  -?> doCenterFloat
-            , className =? "Pavucontrol"           -?> doCenterFloat
-            , className =? "Paprefs"               -?> doCenterFloat
-            , className =? "Pinentry"              -?> doCenterFloat
-            , isPrefixOf ".blueman-" <$> className -?> doCenterFloat
-            , isDialog                             -?> doCenterFloat
-            , isRole =? "pop-up"                   -?> doCenterFloat
-            , isType "_NET_WM_WINDOW_TYPE_SPLASH"  -?> doCenterFloat
-            , isState "_NET_WM_STATE_ABOVE"        -?> doCenterFloat
-            , isFullscreen                         -?> doFullFloat
-            , pure True                            -?> tileBelow
+            [ resource =? "desktop_window"               -?> doIgnore
+            , isRole =? "GtkFileChooserDialog"           -?> doCenterRect (1/3, 1/2)
+            , title =? "XMonad bindings"                 -?> doCenterRect (1/3, 1/2)
+            , className =? "lxqt-openssh-askpass"        -?> doCenterFloat
+            , className =? "Nm-connection-editor"        -?> doCenterFloat
+            , className =? "Pavucontrol"                 -?> doCenterFloat
+            , className =? "Paprefs"                     -?> doCenterFloat
+            , className =? "Pinentry"                    -?> doCenterFloat
+            , className =? "Org.gnome.NautilusPreviewer" -?> doCenterFloat
+            , isPrefixOf ".blueman-" <$> className       -?> doCenterFloat
+            , isDialog                                   -?> doCenterFloat
+            , isRole =? "pop-up"                         -?> doCenterFloat
+            , isType "_NET_WM_WINDOW_TYPE_SPLASH"        -?> doCenterFloat
+            , isState "_NET_WM_STATE_ABOVE"              -?> doCenterFloat
+            , isFullscreen                               -?> doFullFloat
+            , pure True                                  -?> tileBelow
             ]
 
         tileBelow = insertPosition Below Newer
