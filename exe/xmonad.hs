@@ -276,11 +276,13 @@ projects =
 -- dynamicTitle event hook to position the window
 scratchpads =
   [ NS "Spotify" ("spotify --force-device-scale-factor=" <> show resScaling) (className =? "Spotify") idHook,
+    NS "1Password" "1password" onePassMainWin $ doTopRect (1 / 2, 1 / 2),
     NS "Mpv" "mpv --idle=yes --force-window=yes" (className =? "mpv") doFloatVideo,
-    NS "Calculator" "galculator" (className =? "Galculator") doFlotTopCenter,
+    NS "Calculator" "galculator" (className =? "Galculator") doFloatTopCenter,
     NS "Process Viewer" myProcessViewer (title =? "Htop") $ doTopRect (1 / 2, 1 / 2)
   ]
-
+  where
+    onePassMainWin = className =? "1Password" <&&> (not <$> (title =? "Two-factor authentication"))
 
 
 --------------------------------------------------------------------------}}}
@@ -394,6 +396,7 @@ myManageHook =
             [ resource =? "desktop_window"               -?> doIgnore
             , isRole =? "GtkFileChooserDialog"           -?> doCenterRect (1/3, 1/2)
             , title =? "XMonad bindings"                 -?> doCenterRect (1/3, 1/2)
+            , title =? "Two-factor authentication"       -?> doCenterFloat -- 1Password
             , className =? "lxqt-openssh-askpass"        -?> doCenterFloat
             , className =? "Nm-connection-editor"        -?> doCenterFloat
             , className =? "Pavucontrol"                 -?> doCenterFloat
@@ -530,8 +533,8 @@ doCenterRect (w, h) = doRectFloat $ W.RationalRect x y w h
     y = (1 - h) / 2
 
 -- Center top of screen
-doFlotTopCenter :: ManageHook
-doFlotTopCenter =
+doFloatTopCenter :: ManageHook
+doFloatTopCenter =
     doFloatDep $ \(W.RationalRect _ _ w h) -> W.RationalRect ((1 - w) / 2) 0 w h
 
 doTopRect :: (Rational, Rational) -> ManageHook
@@ -639,6 +642,7 @@ myKeys conf = let
          [ ("M-m"                   , addName "NSP Spotify"                $ namedScratchpadAction scratchpads "Spotify")
          , ("M-v"                   , addName "NSP Mpv"                    $ namedScratchpadAction scratchpads "Mpv")
          , ("M-t"                   , addName "NSP Processes"              $ namedScratchpadAction scratchpads "Process Viewer")
+         , ("M-p"                   , addName "NSP Password Manager"       $ namedScratchpadAction scratchpads "1Password")
          ] ^++^
 
 
