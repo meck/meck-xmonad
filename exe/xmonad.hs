@@ -275,11 +275,11 @@ projects =
 -- Spotify changes name after launch so we use a
 -- dynamicTitle event hook to position the window
 scratchpads =
-    [ NS "Spotify" ("spotify --force-device-scale-factor=" <> show resScaling) (className =? "Spotify") idHook
-    , NS "Mpv" "mpv --idle=yes --force-window=yes" (className =? "mpv") doFloatVideo
-    , NS "Calculator" "galculator" (className =? "Galculator") doFlotTopCenter
-    , NS "Process Viewer" myProcessViewer (title =? "Htop") doFlotTopCenter
-    ]
+  [ NS "Spotify" ("spotify --force-device-scale-factor=" <> show resScaling) (className =? "Spotify") idHook,
+    NS "Mpv" "mpv --idle=yes --force-window=yes" (className =? "mpv") doFloatVideo,
+    NS "Calculator" "galculator" (className =? "Galculator") doFlotTopCenter,
+    NS "Process Viewer" myProcessViewer (title =? "Htop") $ doTopRect (1 / 2, 1 / 2)
+  ]
 
 
 
@@ -533,6 +533,11 @@ doCenterRect (w, h) = doRectFloat $ W.RationalRect x y w h
 doFlotTopCenter :: ManageHook
 doFlotTopCenter =
     doFloatDep $ \(W.RationalRect _ _ w h) -> W.RationalRect ((1 - w) / 2) 0 w h
+
+doTopRect :: (Rational, Rational) -> ManageHook
+doTopRect (w, h) = doRectFloat $ W.RationalRect x 0 w h
+  where
+    x = (1 - w) / 2
 
 doFloatVideo :: ManageHook
 doFloatVideo = doFloatDep $ \(W.RationalRect _ _ w h) ->
