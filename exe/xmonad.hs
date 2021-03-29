@@ -183,11 +183,12 @@ decoBarTheme = def { activeColor         = activeCol
 --                               Applictions                              {{{
 -----------------------------------------------------------------------------
 
-myTerminal = "alacritty"
+myTerminal = "kitty"
+myAltTerminal = "alacritty"
 myBrowser = "firefox"
 myLauncher = "rofi"
 myCalculator = "rofi-calc"
-myProcessViewer = myTerminal <> " --title Htop -e htop"
+myProcessViewer = myAltTerminal <> " --title Htop -e htop"
 rofiClip =
     "rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'"
 
@@ -252,7 +253,7 @@ projects =
         { projectName      = wsComs
         , projectDirectory = "~/"
         , projectStartHook = Just $ do
-                                 spawnOn wsComs $ myTerminal <> " -t WeeChat -e weechat"
+                                 spawnOn wsComs $ myAltTerminal <> " -t WeeChat -e weechat"
                                  spawnOn wsComs "slack"
         }
 
@@ -632,6 +633,7 @@ myKeys conf = let
          [ ("M-<Space>"             , addName "Launcher"                   $ spawn $ myLauncher <> " -show combi")
          , ("M-C-v"                 , addName "Clipboard"                  $ spawn rofiClip)
          , ("M-<Return>"            , addName "Terminal"                   $ spawn myTerminal)
+         , ("M-S-<Return>"          , addName "Alt Terminal"               $ spawn myAltTerminal)
          , ("M-\\"                  , addName "Browser"                    $ spawn myBrowser)
          , ("<Print>"               , addName "Screenshot"                 $ spawn "flameshot gui")
          , ("M-n"                   , addName "Calculator"                 $ spawn myCalculator)
