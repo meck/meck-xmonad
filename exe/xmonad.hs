@@ -21,7 +21,7 @@ import           XMonad
 
 import           XMonad.Actions.CopyWindow
 import           XMonad.Actions.CycleWS
-import           XMonad.Actions.DynamicWorkspaces
+import           XMonad.Actions.DynamicWorkspaces ( removeEmptyWorkspace )
 import           XMonad.Actions.DynamicProjects
 import qualified XMonad.Actions.DynamicWorkspaceOrder as DO
 import           XMonad.Actions.MessageFeedback
@@ -133,7 +133,7 @@ resScaling = 1.0
 scaleRes :: Integer -> Dimension
 scaleRes = floor . ( resScaling * ) . realToFrac
 
-defaultSpacing = toInteger $ scaleRes 17
+defaultSpacing = toInteger $ scaleRes 5
 
 myFont = "xft:Roboto Condensed"
 
@@ -232,8 +232,7 @@ instance XPrompt ShortcutsPrompt where
 -----------------------------------------------------------------------------
 
 wsDefault = "main"
-wsConf    = "nix Config"
-wsCode    = "code"
+wsConf    = "nixos"
 wsComs    = "coms"
 
 myWorkspaces = [wsDefault]
@@ -241,15 +240,6 @@ myWorkspaces = [wsDefault]
 projects =
 
     [ Project
-        { projectName      = wsCode
-        , projectDirectory = "~/"
-        , projectStartHook = Just $ do
-                                 spawnOn wsCode myTerminal
-                                 spawnOn wsCode myTerminal
-                                 spawnOn wsCode myBrowser
-        }
-
-    , Project
         { projectName      = wsComs
         , projectDirectory = "~/"
         , projectStartHook = Just $ do
@@ -262,7 +252,7 @@ projects =
         , projectDirectory = "/etc/nixos/"
         , projectStartHook = Just $ do
                                  spawnOn wsConf myTerminal
-                                 spawnOn wsConf myBrowser
+                                 spawnOn wsConf $ myBrowser <> " --new-window status.nixos.org"
         }
     ]
 
