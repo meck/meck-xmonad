@@ -608,7 +608,7 @@ myKeys conf = let
         [ ("M-q"                    , addName "Restart XMonad"              $ spawn "xmonad --restart")
         , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt hotPromptTheme  "quit XMonad" $ io exitSuccess)
         , ("M-'"                    , addName "Shortcuts Menu"              shortcutsPrompt)
-        , ("M1-<Space>"             , addName "Toggle Keyboard layout"      toggleKeyboard)
+        , ("M-C-<Space>"            , addName "Toggle Keyboard layout"      toggleKeyboard)
         , ("<Pause>"                , addName "Increase Monitor Backlight"  $ spawn "backlight inc")
         , ("<Scroll_lock>"          , addName "Decrease Monitor Backlight"  $ spawn "backlight dec")
         ] ^++^
