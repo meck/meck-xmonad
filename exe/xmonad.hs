@@ -50,11 +50,9 @@ import           XMonad.Layout.BinarySpacePartition
 import           XMonad.Layout.BorderResize
 import           XMonad.Layout.CenteredMaster   ( centerMaster )
 import           XMonad.Layout.Decoration
-import           XMonad.Layout.Grid
 import           XMonad.Layout.MagicFocus
 import           XMonad.Layout.MultiToggle
 import           XMonad.Layout.MultiToggle.Instances
-import           XMonad.Layout.PerWorkspace
 import           XMonad.Layout.Reflect
 import           XMonad.Layout.Renamed
 import           XMonad.Layout.ResizableTile
@@ -233,21 +231,12 @@ instance XPrompt ShortcutsPrompt where
 
 wsDefault = "main"
 wsConf    = "nixos"
-wsComs    = "coms"
 
 myWorkspaces = [wsDefault]
 
 projects =
 
     [ Project
-        { projectName      = wsComs
-        , projectDirectory = "~/"
-        , projectStartHook = Just $ do
-                                 spawnOn wsComs $ myAltTerminal <> " -t WeeChat -e weechat"
-                                 spawnOn wsComs "slack"
-        }
-
-    , Project
         { projectName      = wsConf
         , projectDirectory = "/etc/nixos/"
         , projectStartHook = Just $ do
@@ -270,7 +259,8 @@ scratchpads =
     NS "1Password" "1password" onePassMainWin $ doTopRect (1 / 2, 1 / 2),
     NS "Mpv" "mpv --idle=yes --force-window=yes" (className =? "mpv") doFloatVideo,
     NS "Calculator" "galculator" (className =? "Galculator") doFloatTopCenter,
-    NS "Process Viewer" myProcessViewer (title =? "Htop") $ doTopRect (1 / 2, 1 / 2)
+    NS "Process Viewer" myProcessViewer (title =? "Htop") $ doTopRect (1 / 2, 1 / 2),
+    NS "Slack" "slack" (className =? "Slack") $ doTopRect (2 / 3, 2 / 3)
   ]
   where
     onePassMainWin = className =? "1Password" <&&> (not <$> (title =? "Two-factor authentication"))
@@ -423,7 +413,7 @@ myManageHook =
 --                                 Layouts                                {{{
 -----------------------------------------------------------------------------
 
-myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
+myLayoutHook = mkToggle1 ZOOM $ threeCol ||| tall ||| bsp ||| full
 
   where
 
@@ -431,7 +421,6 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
     defBorder = Border defaultSpacing defaultSpacing defaultSpacing defaultSpacing
     mySpacing = spacingRaw False defBorder True defBorder True
     addDecoBar = decoration shrinkText decoBarTheme $ SideDecoration U
-    perWsLayout = onWorkspace wsComs $ comsLayout ||| full
 
     bsp =
         named "BSP"
@@ -465,16 +454,6 @@ myLayoutHook = mkToggle1 ZOOM $ perWsLayout $ threeCol ||| tall ||| bsp ||| full
             $ mkToggle1 REFLECTX
             $ mySpacing
             $ ThreeColMid 1 (1 / 200) (7 / 16)
-
-    comsLayout =
-        named "Coms"
-            $ avoidStruts
-            $ borderResize
-            $ addDecoBar
-            $ mySpacing
-            $ mkToggle1 MIRROR
-            $ mkToggle1 REFLECTX
-            $ GridRatio (3/2)
 
 
 
@@ -635,6 +614,7 @@ myKeys conf = let
          , ("M-v"                   , addName "NSP Mpv"                    $ namedScratchpadAction scratchpads "Mpv")
          , ("M-t"                   , addName "NSP Processes"              $ namedScratchpadAction scratchpads "Process Viewer")
          , ("M-p"                   , addName "NSP Password Manager"       $ namedScratchpadAction scratchpads "1Password")
+         , ("M-s"                   , addName "NSP Slack"                  $ namedScratchpadAction scratchpads "Slack")
          ] ^++^
 
 
