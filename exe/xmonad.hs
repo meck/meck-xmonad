@@ -131,7 +131,7 @@ resScaling = 1.0
 scaleRes :: Integer -> Dimension
 scaleRes = floor . ( resScaling * ) . realToFrac
 
-defaultSpacing = toInteger $ scaleRes 5
+defaultSpacing = toInteger $ scaleRes 7
 
 myFont = "xft:Roboto Condensed"
 
@@ -384,6 +384,7 @@ myManageHook =
             , className =? "Paprefs"                     -?> doCenterFloat
             , className =? "Pinentry"                    -?> doCenterFloat
             , className =? "Org.gnome.NautilusPreviewer" -?> doCenterFloat
+            , className =? "Slack | mini panel"          -?> doIgnore
             , isPrefixOf ".blueman-" <$> className       -?> doCenterFloat
             , isDialog                                   -?> doCenterFloat
             , isRole =? "pop-up"                         -?> doCenterFloat
