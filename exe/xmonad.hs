@@ -131,7 +131,7 @@ resScaling = 1.0
 scaleRes :: Integer -> Dimension
 scaleRes = floor . ( resScaling * ) . realToFrac
 
-defaultSpacing = toInteger $ scaleRes 7
+defaultSpacing = toInteger $ scaleRes 8
 
 myFont = "xft:Roboto Condensed"
 
@@ -376,7 +376,7 @@ myManageHook =
         manageSpecific = composeOne
             [ resource =? "desktop_window"               -?> doIgnore
             , isRole =? "GtkFileChooserDialog"           -?> doCenterRect (1/3, 1/2)
-            , title =? "XMonad bindings"                 -?> doCenterRect (1/3, 1/2)
+            , title =? "XMonad bindings"                 -?> doTopRect (1/2, 1/2)
             , title =? "Two-factor authentication"       -?> doCenterFloat -- 1Password
             , className =? "lxqt-openssh-askpass"        -?> doCenterFloat
             , className =? "Nm-connection-editor"        -?> doCenterFloat
@@ -535,7 +535,8 @@ showKeybindings x = addName "Show Keybindings" $ io $ do
           "--title='XMonad bindings'",
           "--no-buttons",
           "--text-info",
-          "--close-on-unfocus"
+          "--close-on-unfocus",
+          "--fontname='Iosevka 10'"
         ]
   hPutStr h $ unlines ["XMonad bindings", "Search with C-s", ""]
   hPutStr h $ unlines $ showKm x
@@ -668,8 +669,8 @@ myKeys conf = let
     subKeys "Layout Management"
          [ ("M-/"                   , addName "Cycle all layouts"          $ sendMessage NextLayout)
          , ("M-S-/"                 , addName "Reset layout"               $ setLayout $ XMonad.layoutHook conf)
-         , ("M-="                   , addName "Increace Window Spacing"    $ incScreenWindowSpacing 5)
-         , ("M--"                   , addName "Decreace Window Spacing"    $ decScreenWindowSpacing 5)
+         , ("M-="                   , addName "Increace Window Spacing"    $ incScreenWindowSpacing 3)
+         , ("M--"                   , addName "Decreace Window Spacing"    $ decScreenWindowSpacing 3)
          , ("M-0"                   , addName "Toogle Window Spacing"      $ toggleScreenSpacingEnabled >> toggleWindowSpacingEnabled)
          , ("M-f"                   , addName "Zoom focused window"        zoomFocus)
          , ("M-r"                   , addName "Rotate/Mirror"              $ tryMsgR Rotate $ Toggle MIRROR)
