@@ -43,6 +43,7 @@ import           XMonad.Hooks.ManageDocks       ( docks
                                                 , avoidStruts
                                                 )
 import           XMonad.Hooks.ManageHelpers
+import           XMonad.Hooks.Place
 import           XMonad.Hooks.SetWMName
 
 
@@ -230,18 +231,20 @@ instance XPrompt ShortcutsPrompt where
 -----------------------------------------------------------------------------
 
 wsDefault = "main"
-wsConf    = "nixos"
+wsMisc    = "misc"
+wsSys    = "sys"
 
-myWorkspaces = [wsDefault]
+myWorkspaces = [wsDefault, wsMisc]
 
 projects =
 
     [ Project
-        { projectName      = wsConf
+        { projectName      = wsSys
         , projectDirectory = "/etc/nixos/"
         , projectStartHook = Just $ do
-                                 spawnOn wsConf myTerminal
-                                 spawnOn wsConf $ myBrowser <> " --new-window status.nixos.org"
+                                 spawnOn wsSys myTerminal
+                                 spawnOn wsSys myTerminal
+                                 spawnOn wsSys $ myBrowser <> " --new-window status.nixos.org"
         }
     ]
 
@@ -316,7 +319,6 @@ myLogHook =
 
     -- Reorder the workspaces using DynamicWorkspaceOrder and
     -- remove NSP workspace from whats sent to polybar.
-    -- Used by TB for selecting workspaces.
     modifyWSPorderHook = do
         ordS <- DO.getSortByOrder
         ewmhDesktopsLogHookCustom (ordS . namedScratchpadFilterOutWorkspace)
@@ -371,21 +373,22 @@ myStartupHook = setWMName "LG3D"
 
 myManageHook :: ManageHook
 myManageHook =
-    namedScratchpadManageHook scratchpads <> addShadows <> manageSpecific
+  namedScratchpadManageHook scratchpads
+    <> manageSpecific
+    <> smartPlaceHook
   where
         manageSpecific = composeOne
-            [ resource =? "desktop_window"               -?> doIgnore
+            [ appName =? "desktop_window"                -?> doIgnore
             , isRole =? "GtkFileChooserDialog"           -?> doCenterRect (1/3, 1/2)
             , title =? "XMonad bindings"                 -?> doTopRect (1/2, 1/2)
-            , title =? "Two-factor authentication"       -?> doCenterFloat -- 1Password
-            , className =? "lxqt-openssh-askpass"        -?> doCenterFloat
-            , className =? "Nm-connection-editor"        -?> doCenterFloat
-            , className =? "Pavucontrol"                 -?> doCenterFloat
-            , className =? "Paprefs"                     -?> doCenterFloat
-            , className =? "Pinentry"                    -?> doCenterFloat
-            , className =? "Org.gnome.NautilusPreviewer" -?> doCenterFloat
-            , className =? "Slack | mini panel"          -?> doIgnore
-            , isPrefixOf ".blueman-" <$> className       -?> doCenterFloat
+            , className =? "lxqt-openssh-askpass"        -?> doSmartFloat
+            , className =? "Nm-connection-editor"        -?> doSmartFloat
+            , className =? "Pavucontrol"                 -?> doSmartFloat
+            , className =? "Paprefs"                     -?> doSmartFloat
+            , className =? "Pinentry"                    -?> doSmartFloat
+            , isPrefixOf ".blueman-" <$> className       -?> doSmartFloat
+            , className =? "Slack | mini panel"          -?> doSmartFloat
+            , className =? "Org.gnome.NautilusPreviewer" -?> doCenterRect (1/2, 1/2)
             , isDialog                                   -?> doCenterFloat
             , isRole =? "pop-up"                         -?> doCenterFloat
             , isType "_NET_WM_WINDOW_TYPE_SPLASH"        -?> doCenterFloat
@@ -394,21 +397,45 @@ myManageHook =
             , pure True                                  -?> tileBelow
             ]
 
+        -- Default tiling, XMonad default is `Above Newer`
         tileBelow = insertPosition Below Newer
 
         isRole = stringProperty "WM_WINDOW_ROLE"
         isType = isInProperty "_NET_WM_WINDOW_TYPE"
         isState = isInProperty "_NET_WM_STATE"
 
-        addShadows :: ManageHook
-        addShadows = composeAll [ className =? c --> go | c <- shadowApps ]
-          where
-            go           = ask >>= (liftX . addTag shadowTagApp) >> idHook
-            shadowTagApp = shadowTag <> "_app"
-            shadowApps   = ["rofi"]
 
+-- Place any floating windows smartly
+smartPlaceHook :: ManageHook
+smartPlaceHook = placeHook $ withGaps (g,g,g,g) $ smart (0.5,0.5)
+  where g = scaleRes 5
 
+-- Float and smart place
+doSmartFloat :: ManageHook
+doSmartFloat = smartPlaceHook <> doFloat
 
+-- Center window with supplied size
+doCenterRect :: (Rational, Rational) -> ManageHook
+doCenterRect (w, h) = doRectFloat $ W.RationalRect x y w h
+  where
+    x, y :: Rational
+    x = (1 - w) / 2
+    y = (1 - h) / 2
+
+-- Center top of screen
+doFloatTopCenter :: ManageHook
+doFloatTopCenter =
+    doFloatDep $ \(W.RationalRect _ _ w h) -> W.RationalRect ((1 - w) / 2) 0 w h
+
+-- Center top of screen with size
+doTopRect :: (Rational, Rational) -> ManageHook
+doTopRect (w, h) = doRectFloat $ W.RationalRect x 0 w h
+  where
+    x = (1 - w) / 2
+
+doFloatVideo :: ManageHook
+doFloatVideo = doFloatDep $ \(W.RationalRect _ _ w h) ->
+    W.RationalRect (1 - 1 / 16 - w / 3) (1 / 10) (w / 3) (h / 3)
 
 --------------------------------------------------------------------------}}}
 --                                 Layouts                                {{{
@@ -494,28 +521,6 @@ instance ExtensionClass ZoomedWorkspaces where
 -- with this gets a shadow in the composer
 shadowTag = "draw_shadow"
 
-
--- Center window with supplied size
-doCenterRect :: (Rational, Rational) -> ManageHook
-doCenterRect (w, h) = doRectFloat $ W.RationalRect x y w h
-  where
-    x, y :: Rational
-    x = (1 - w) / 2
-    y = (1 - h) / 2
-
--- Center top of screen
-doFloatTopCenter :: ManageHook
-doFloatTopCenter =
-    doFloatDep $ \(W.RationalRect _ _ w h) -> W.RationalRect ((1 - w) / 2) 0 w h
-
-doTopRect :: (Rational, Rational) -> ManageHook
-doTopRect (w, h) = doRectFloat $ W.RationalRect x 0 w h
-  where
-    x = (1 - w) / 2
-
-doFloatVideo :: ManageHook
-doFloatVideo = doFloatDep $ \(W.RationalRect _ _ w h) ->
-    W.RationalRect (1 - 1 / 16 - w / 3) (1 / 10) (w / 3) (h / 3)
 
 -- Change keyboard layout between us and swe
 toggleKeyboard = spawn "switch-keyboard-layout"
