@@ -243,7 +243,6 @@ projects =
         , projectDirectory = "/etc/nixos/"
         , projectStartHook = Just $ do
                                  spawnOn wsSys myTerminal
-                                 spawnOn wsSys myTerminal
                                  spawnOn wsSys $ myBrowser <> " --new-window status.nixos.org"
         }
     ]
