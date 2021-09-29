@@ -301,7 +301,7 @@ myEventHook =
 
     -- Reorder the workspaces using DynamicWorkspaceOrder and
     -- remove NSP workspace from whats sent to polybar.
-    -- Used by TB for clicking workspaces.
+    -- Used by polybar for clicking workspaces.
     modifyWSPorderHook e = do
         ordS <- DO.getSortByOrder
         ewmhDesktopsEventHookCustom (ordS . namedScratchpadFilterOutWorkspace) e
@@ -311,10 +311,12 @@ myEventHook =
 --                                   Logs                                  {{{
 ------------------------------------------------------------------------------
 
+myLogHook :: X ()
 myLogHook =
-    shadowZoom >> shadowFloating >> masterHistoryHook >> modifyWSPorderHook
+    modifyWSPorderHook >> shadowZoom >> shadowFloating >> masterHistoryHook
+    -- modifyWSPorderHook should be first to mimize flickering
+    -- in polybar
   where
-
 
     -- Reorder the workspaces using DynamicWorkspaceOrder and
     -- remove NSP workspace from whats sent to polybar.
