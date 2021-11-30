@@ -185,7 +185,7 @@ decoBarTheme = def { activeColor         = activeCol
 myTerminal = "kitty"
 myAltTerminal = "alacritty"
 myBrowser = "firefox"
-myLauncher = "rofi"
+myLauncher = "rofi -show combi -show-icons"
 myCalculator = "rofi-calc"
 myProcessViewer = myAltTerminal <> " --title Htop -e htop"
 rofiClip =
@@ -199,7 +199,7 @@ rofiClip =
 
 shortcutsCmds = [ ("a" , "Autorandr" ,            spawn "rofi-autorandr")
                 , ("v" , "Fetch from clipboard" , spawn rofiClip)
-                , ("n" , "Network config"       , spawn "networkmanager_dmenu")
+                , ("e" , "Emoji Picker"         , spawn "rofi-emoji")
                 ]
 
 -- Display a prompt with hotkeys
@@ -602,12 +602,7 @@ myKeys conf = let
 
 
     subKeys "Launcher"
-         [ ("M-<Space>"             , addName "Launcher"                   $ spawn $ myLauncher <> " -show combi")
-        ] ^++^
-
-
-    subKeys "Launcher"
-         [ ("M-<Space>"             , addName "Launcher"                   $ spawn $ myLauncher <> " -show combi")
+         [ ("M-<Space>"             , addName "Launcher"                   $ spawn myLauncher)
          , ("M-C-v"                 , addName "Clipboard"                  $ spawn rofiClip)
          , ("M-<Return>"            , addName "Terminal"                   $ spawn myTerminal)
          , ("M-S-<Return>"          , addName "Alt Terminal"               $ spawn myAltTerminal)
