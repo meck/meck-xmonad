@@ -146,6 +146,7 @@ activeCol   = hexCol nord10
 inactiveCol = hexCol nord3
 urgentCol   = hexCol nord12
 criticalCol = hexCol nord11
+specialCol  = hexCol nord15
 
 myPromptTheme :: XPConfig
 myPromptTheme = def { font              = fontW 100 myFont
@@ -175,6 +176,15 @@ decoBarTheme = def { activeColor         = activeCol
                    , decoHeight          = scaleRes 8
                    , decoWidth           = scaleRes 12
                    }
+
+-- For indicating a window copied to multiple workspaces
+copiedBarTheme = decoBarTheme { activeColor         = specialCol
+                              , inactiveColor       = specialCol
+                              , urgentColor         = specialCol
+                              , activeTextColor     = specialCol
+                              , inactiveTextColor   = specialCol
+                              , urgentTextColor     = specialCol
+                              }
 
 
 
@@ -449,13 +459,15 @@ myLayoutHook = mkToggle1 ZOOM $ threeCol ||| tall ||| bsp ||| full
     named x = renamed [Replace x]
     defBorder = Border defaultSpacing defaultSpacing defaultSpacing defaultSpacing
     mySpacing = spacingRaw False defBorder True defBorder True
-    addDecoBar = decoration shrinkText decoBarTheme $ SideDecoration U
+    addCopiedBar = decoration shrinkText copiedBarTheme CopiedDecoration
+    addDecoBar = decoration shrinkText decoBarTheme (SideDecoration U)
+    myDecoration = addDecoBar . addCopiedBar
 
     bsp =
         named "BSP"
             $ avoidStruts
             $ borderResize
-            $ addDecoBar
+            $ myDecoration
             $ mkToggle1 MIRROR
             $ mkToggle1 REFLECTX
             $ mySpacing emptyBSP
@@ -468,7 +480,7 @@ myLayoutHook = mkToggle1 ZOOM $ threeCol ||| tall ||| bsp ||| full
         named "Tall"
             $ avoidStruts
             $ borderResize
-            $ addDecoBar
+            $ myDecoration
             $ mySpacing
             $ mkToggle1 MIRROR
             $ mkToggle1 REFLECTX
@@ -478,7 +490,7 @@ myLayoutHook = mkToggle1 ZOOM $ threeCol ||| tall ||| bsp ||| full
         named "Columns"
             $ avoidStruts
             $ borderResize
-            $ addDecoBar
+            $ myDecoration
             $ mkToggle1 MIRROR
             $ mkToggle1 REFLECTX
             $ mySpacing

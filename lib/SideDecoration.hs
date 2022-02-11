@@ -29,3 +29,18 @@ instance Eq a => DecorationStyle SideDecoration a where
       SideDecoration D -> Rectangle x (y + fi (h - dh)) w dh
       SideDecoration L -> Rectangle x y dw h
     | otherwise = Nothing
+
+-- Decorate windows that are duplicated to any
+-- other workspace then the current one
+data CopiedDecoration a = CopiedDecoration
+  deriving (Show, Read)
+
+instance DecorationStyle CopiedDecoration Window where
+  shrink _ (Rectangle _ _ _ dh) (Rectangle x y w h) = Rectangle x y w (h - dh)
+  decorate _ _ dh _ _ _ (win, Rectangle x y w h) = do
+    ws <- W.hidden <$> gets windowset
+    let hiddenWins = ws >>= (W.integrate' . W.stack)
+    pure $
+      if win `elem` hiddenWins
+        then Just $ Rectangle x (y + fi (h - dh)) w dh
+        else Nothing
