@@ -12,7 +12,10 @@ import XMonad.Layout.Spacing (Border, Spacing (Spacing))
 import qualified XMonad.StackSet as W
 import XMonad.Util.XUtils (fi)
 
--- Wraper of `ScaledSpacing` that is scaling aware
+--  ╭──────────────────────────────────────────────────────────╮
+--  │     Wraper of `ScaledSpacing` that is scaling aware      │
+--  ╰──────────────────────────────────────────────────────────╯
+
 newtype ScaledSpacing a = ScaledSpacing (Spacing a) deriving (Show, Read)
 
 instance Eq a => LayoutModifier ScaledSpacing a where
@@ -23,7 +26,7 @@ instance Eq a => LayoutModifier ScaledSpacing a where
 
   pureModifier (ScaledSpacing s) lr mst wrs = fmap ScaledSpacing <$> pureModifier s lr mst wrs
 
-  -- TODO Messages that modifes the spaceing should be fixed
+  -- TODO Messages that modifies the spacing should be fixed
   pureMess (ScaledSpacing s) m = ScaledSpacing <$> pureMess s m
 
   modifierDescription ScaledSpacing {} = "ScaledSpacing"
@@ -31,7 +34,10 @@ instance Eq a => LayoutModifier ScaledSpacing a where
 scaledSpacingRaw :: Bool -> Border -> Bool -> Border -> Bool -> l a -> ModifiedLayout ScaledSpacing l a
 scaledSpacingRaw b sb sbe wb wbe = ModifiedLayout (ScaledSpacing (Spacing b sb sbe wb wbe))
 
--- Decorate any side of the window
+--  ╭──────────────────────────────────────────────────────────╮
+--  │    Decorator of any side of the window, scaling aware    │
+--  ╰──────────────────────────────────────────────────────────╯
+
 newtype SideDecoration a = SideDecoration Direction2D
   deriving (Show, Read)
 
@@ -54,8 +60,11 @@ instance Eq a => DecorationStyle SideDecoration a where
           SideDecoration L -> Rectangle x y dw' h
     | otherwise = pure Nothing
 
--- Decorate windows that are duplicated to any
--- other workspace then the current one
+--  ╭──────────────────────────────────────────────────────────╮
+--  │   Decorator with a bar at the bottom only for windows    │
+--  │   that are duplicated to any other workspace then the    │
+--  │                       current one                        │
+--  ╰──────────────────────────────────────────────────────────╯
 data CopiedDecoration a = CopiedDecoration
   deriving (Show, Read)
 

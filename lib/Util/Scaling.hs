@@ -1,11 +1,19 @@
 module Util.Scaling (scaleStartupHook, mkXPrompt', confirmPrompt', switchProjectPrompt', renameProjectPrompt', shiftToProjectPrompt', changeProjectDirPrompt', scaleDimension, scaleBorder, incScreenWindowSpacing', decScreenWindowSpacing') where
 
+--  ╭──────────────────────────────────────────────────────────╮
+--  │   Track `GDK_SCALE` and provide wrapers of some other    │
+--  │                        functions                         │
+--  │                  to respect any scaling                  │
+--  │                            --                            │
+--  │             `scaleStartupHook` must be used              │
+--  ╰──────────────────────────────────────────────────────────╯
+
 import Control.Monad ((<=<))
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import XMonad
 import XMonad.Actions.DynamicProjects (changeProjectDirPrompt, renameProjectPrompt, shiftToProjectPrompt, switchProjectPrompt)
-import XMonad.Layout.Spacing (Border, borderMap, decScreenWindowSpacing, incScreenSpacing, incScreenWindowSpacing)
+import XMonad.Layout.Spacing (Border, borderMap, decScreenWindowSpacing, incScreenWindowSpacing)
 import XMonad.Prompt (ComplFunction, XPConfig (height), XPrompt, mkXPrompt)
 import XMonad.Prompt.ConfirmPrompt (confirmPrompt)
 import qualified XMonad.Util.ExtensibleState as XS

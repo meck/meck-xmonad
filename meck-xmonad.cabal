@@ -1,32 +1,44 @@
 cabal-version:       2.4
 name:                meck-xmonad
-version:             0.1.0.0
-author:              author
-maintainer:          email@email.com
+version:             0.1.1.0
+author:              meck
+maintainer:          johan@meck.se
 build-type:          Simple
 
-executable xmonad
-  hs-source-dirs:      ./exe
-                       ./lib
+common shared-properties
+ default-language:   Haskell2010
 
-  main-is:             xmonad.hs
-
-  ghc-options:         -Wall
-                       -Wcompat
-                       -Wincomplete-record-updates
-                       -Wincomplete-uni-patterns
-                       -Wno-redundant-constraints
-                       -Wno-missing-signatures
-
-  other-modules:       Util.PagerHints
-                     , Util.Scaling
-                     , Layout.Custom
-                     , Colors.Nord
-
-  build-depends:       xmonad
+ build-depends:        xmonad
                      , xmonad-contrib
                      , base
                      , containers
                      , utf8-string
+                     , transformers
 
-  default-language:    Haskell2010
+ ghc-options:        -Wall
+                     -Wcompat
+                     -Widentities
+                     -Wincomplete-uni-patterns
+                     -Wincomplete-record-updates
+                     -Wredundant-constraints
+                     -fhide-source-paths
+                     -Wpartial-fields
+
+executable xmonad
+  import:            shared-properties
+
+  hs-source-dirs:    ./exe
+                     ./lib
+
+  main-is:           Main.hs
+
+  other-modules:       Util.PagerHints
+                     , Util.Scaling
+                     , Util.ShadowTag
+                     , Layout.Custom
+                     , Layout.Zoom
+                     , Hooks.Misc
+                     , Colors.Nord
+                     , Keymap
+                     , Theme
+                     , Misc
