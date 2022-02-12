@@ -33,6 +33,7 @@ executable xmonad
   main-is:           Main.hs
 
   other-modules:       Util.PagerHints
+                     , Util.Viewport
                      , Util.Scaling
                      , Util.ShadowTag
                      , Layout.Custom

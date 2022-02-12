@@ -17,6 +17,7 @@ import Theme
 import Util.PagerHints (pagerHints)
 import Util.Scaling
 import Util.ShadowTag
+import Util.Viewport (viewPortsLogHookCustom, viewPortsStartupHook)
 import XMonad
 import XMonad.Actions.DynamicProjects
 import qualified XMonad.Actions.DynamicWorkspaceOrder as DO
@@ -40,7 +41,6 @@ import XMonad.Hooks.SetWMName
 import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.BorderResize
 import XMonad.Layout.Decoration
-import XMonad.Layout.MagicFocus
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.Reflect
@@ -48,7 +48,6 @@ import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
-import qualified XMonad.StackSet as W
 import XMonad.Util.NamedActions
 import XMonad.Util.NamedScratchpad
 
@@ -147,15 +146,14 @@ myEventHook =
 --  ╰──────────────────────────────────────────────────────────╯
 
 myLogHook :: X ()
-myLogHook =
-  -- modifyWSPorderHook should be first to mimize flickering in polybar
-  modifyWSPorderHook >> shadowZoomLogHook >> shadowFloatingLogHook >> masterHistoryHook
-  where
-    -- Reorder the workspaces using DynamicWorkspaceOrder and
-    -- remove NSP workspace from whats sent to polybar.
-    modifyWSPorderHook = do
-      ordS <- DO.getSortByOrder
-      ewmhDesktopsLogHookCustom (ordS . namedScratchpadFilterOutWorkspace)
+myLogHook = do
+  ordS <- (. namedScratchpadFilterOutWorkspace) <$> DO.getSortByOrder
+  -- ewmh should be first to mimize flickering in polybar
+  ewmhDesktopsLogHookCustom ordS
+  viewPortsLogHookCustom ordS
+  shadowZoomLogHook
+  shadowFloatingLogHook
+  masterHistoryHook
 
 --  ╭──────────────────────────────────────────────────────────╮
 --  │                         Startup                          │
@@ -165,6 +163,9 @@ myStartupHook :: X ()
 myStartupHook = do
   -- For storing and using `GDK_SCALE` see Util.Scaling
   scaleStartupHook
+
+  -- Provide _NET_DESKTOP_VIEWPORT
+  viewPortsStartupHook
 
   -- Some java apps (Quartus II), has issues
   -- with unknown WMs, fake another WM
