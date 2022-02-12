@@ -62,7 +62,6 @@ import           XMonad.Layout.ThreeColumns
 
 
 import           XMonad.Prompt
-import           XMonad.Prompt.ConfirmPrompt
 
 import qualified XMonad.StackSet               as W
 
@@ -73,10 +72,10 @@ import           XMonad.Util.NamedActions
 import           XMonad.Util.NamedScratchpad
 import           XMonad.Util.Run
 
-import           Nord
-import           PagerHints ( pagerHints )
-import           SideDecoration
-
+import           Colors.Nord
+import           Util.PagerHints ( pagerHints )
+import           Util.Scaling
+import           Layout.Custom
 
 
 --------------------------------------------------------------------------}}}
@@ -124,15 +123,7 @@ myNav2DConf = def
 --                                 Theming                                {{{
 -----------------------------------------------------------------------------
 
--- Resizing for hidpi,
--- change from nix before building
-resScaling :: Float
-resScaling = 1.0
-
-scaleRes :: Integer -> Dimension
-scaleRes = floor . ( resScaling * ) . realToFrac
-
-defaultSpacing = toInteger $ scaleRes 8
+defaultSpacing = 8
 
 myFont = "xft:Roboto Condensed"
 
@@ -157,7 +148,7 @@ myPromptTheme = def { font              = fontW 100 myFont
                     , borderColor       = accentCol
                     , maxComplRows      = Just 10
                     , promptBorderWidth = 1
-                    , height            = scaleRes 55
+                    , height            = 55
                     , position          = CenteredAt 0.33 0.33
                     }
 
@@ -173,8 +164,8 @@ decoBarTheme = def { activeColor         = activeCol
                    , activeTextColor     = activeCol
                    , inactiveTextColor   = inactiveCol
                    , urgentTextColor     = urgentCol
-                   , decoHeight          = scaleRes 8
-                   , decoWidth           = scaleRes 12
+                   , decoHeight          = 8
+                   , decoWidth           = 12
                    }
 
 -- For indicating a window copied to multiple workspaces
@@ -214,7 +205,7 @@ shortcutsCmds = [ ("a" , "Autorandr" ,            spawn "rofi-autorandr")
 
 -- Display a prompt with hotkeys
 -- as in `shortcutsCmds`
-shortcutsPrompt = mkXPrompt ShortcutsPrompt
+shortcutsPrompt = mkXPrompt' ShortcutsPrompt
                             promptCfg
                             (const $ pure [])
                             (const $ pure ())
@@ -264,10 +255,8 @@ projects =
 --                               Scratchpads                              {{{
 -----------------------------------------------------------------------------
 
--- Spotify changes name after launch so we use a
--- dynamicTitle event hook to position the window
 scratchpads =
-  [ NS "Spotify" ("spotify --force-device-scale-factor=" <> show resScaling) (className =? "Spotify") idHook,
+  [ NS "Spotify" "spotify" (className =? "Spotify") idHook,
     NS "1Password" "1password" onePassMainWin $ doTopRect (1 / 2, 1 / 2),
     NS "Mpv" "mpv --idle=yes --force-window=yes" (className =? "mpv") doFloatVideo,
     NS "Calculator" "galculator" (className =? "Galculator") doFloatTopCenter,
@@ -305,6 +294,8 @@ myEventHook =
         pure $ not isNoMFFLayout && not isZoomedLayout
 
 
+    -- Spotify changes name after launch so we use a
+    -- dynamicTitle event hook to position the window
     spotifyFloatHook =
         dynamicTitle (title =? "Spotify" --> doCenterRect (2 / 3, 2 / 3))
 
@@ -372,9 +363,14 @@ myLogHook =
 --                                 Startup                                {{{
 -----------------------------------------------------------------------------
 
--- Some java apps (Quartus II), has issues
--- with unknown WMs, fake another WM
-myStartupHook = setWMName "LG3D"
+myStartupHook :: X ()
+myStartupHook = do
+    -- For storing and using `GDK_SCALE` see Util.Scaling
+    scaleStartupHook
+
+    -- Some java apps (Quartus II), has issues
+    -- with unknown WMs, fake another WM
+    setWMName "LG3D"
 
 
 
@@ -418,8 +414,9 @@ myManageHook =
 
 -- Place any floating windows smartly
 smartPlaceHook :: ManageHook
-smartPlaceHook = placeHook $ withGaps (g,g,g,g) $ smart (0.5,0.5)
-  where g = scaleRes 5
+smartPlaceHook = do
+  g <- liftX $ scaleDimension 5
+  placeHook $ withGaps (g, g, g, g) $ smart (0.5, 0.5)
 
 -- Float and smart place
 doSmartFloat :: ManageHook
@@ -458,7 +455,7 @@ myLayoutHook = mkToggle1 ZOOM $ threeCol ||| tall ||| bsp ||| full
 
     named x = renamed [Replace x]
     defBorder = Border defaultSpacing defaultSpacing defaultSpacing defaultSpacing
-    mySpacing = spacingRaw False defBorder True defBorder True
+    mySpacing = scaledSpacingRaw False defBorder True defBorder True
     addCopiedBar = decoration shrinkText copiedBarTheme CopiedDecoration
     addDecoBar = decoration shrinkText decoBarTheme (SideDecoration U)
     myDecoration = addDecoBar . addCopiedBar
@@ -598,14 +595,14 @@ myKeys conf = let
 
         killAllorRemWS = gets (W.index . windowset) >>= \case
             [] -> removeEmptyWorkspace
-            _  -> confirmPrompt hotPromptTheme "kill all" killAll
+            _  -> confirmPrompt' hotPromptTheme "kill all" killAll
 
 
     in
 
     subKeys "System"
         [ ("M-q"                    , addName "Restart XMonad"              $ spawn "xmonad --restart")
-        , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt hotPromptTheme  "quit XMonad" $ io exitSuccess)
+        , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt' hotPromptTheme "quit XMonad" $ io exitSuccess)
         , ("M-'"                    , addName "Shortcuts Menu"              shortcutsPrompt)
         , ("M-C-<Space>"            , addName "Toggle Keyboard layout"      toggleKeyboard)
         , ("<Pause>"                , addName "Increase Monitor Backlight"  $ spawn "backlight inc")
@@ -663,10 +660,10 @@ myKeys conf = let
 
     subKeys "Workspaces"
          (
-         [ ("M-w"                   , addName "Switch to Project"          $ switchProjectPrompt myPromptTheme)
-         , ("M-S-w s"               , addName "Shift to Project"           $ shiftToProjectPrompt myPromptTheme)
-         , ("M-S-w r"               , addName "Rename Project"             $ renameProjectPrompt myPromptTheme)
-         , ("M-S-w d"               , addName "Change project directory"   $ changeProjectDirPrompt myPromptTheme)
+         [ ("M-w"                   , addName "Switch to Project"          $ switchProjectPrompt' myPromptTheme)
+         , ("M-S-w s"               , addName "Shift to Project"           $ shiftToProjectPrompt' myPromptTheme)
+         , ("M-S-w r"               , addName "Rename Project"             $ renameProjectPrompt' myPromptTheme)
+         , ("M-S-w d"               , addName "Change project directory"   $ changeProjectDirPrompt' myPromptTheme)
          , ("M-<Escape>"            , addName "Next non-empty workspace"   nextNonEmptyWS)
          , ("M-S-<Escape>"          , addName "Prev non-empty workspace"   prevNonEmptyWS)
          , ("M-`"                   , addName "Next non-empty workspace"   nextNonEmptyWS)
@@ -682,8 +679,8 @@ myKeys conf = let
     subKeys "Layout Management"
          [ ("M-/"                   , addName "Cycle all layouts"          $ sendMessage NextLayout)
          , ("M-S-/"                 , addName "Reset layout"               $ setLayout $ XMonad.layoutHook conf)
-         , ("M-="                   , addName "Increace Window Spacing"    $ incScreenWindowSpacing 3)
-         , ("M--"                   , addName "Decreace Window Spacing"    $ decScreenWindowSpacing 3)
+         , ("M-="                   , addName "Increace Window Spacing"    $ incScreenWindowSpacing' 3)
+         , ("M--"                   , addName "Decreace Window Spacing"    $ decScreenWindowSpacing' 3)
          , ("M-0"                   , addName "Toogle Window Spacing"      $ toggleScreenSpacingEnabled >> toggleWindowSpacingEnabled)
          , ("M-f"                   , addName "Zoom focused window"        zoomFocus)
          , ("M-r"                   , addName "Rotate/Mirror"              $ tryMsgR Rotate $ Toggle MIRROR)

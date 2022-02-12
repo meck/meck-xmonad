@@ -30,7 +30,7 @@
 --
 -----------------------------------------------------------------------------
 
-module PagerHints (
+module Util.PagerHints (
   -- * Usage
   -- $usage
   pagerHints

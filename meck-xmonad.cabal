@@ -18,9 +18,10 @@ executable xmonad
                        -Wno-redundant-constraints
                        -Wno-missing-signatures
 
-  other-modules:       Nord
-                     , PagerHints
-                     , SideDecoration
+  other-modules:       Util.PagerHints
+                     , Util.Scaling
+                     , Layout.Custom
+                     , Colors.Nord
 
   build-depends:       xmonad
                      , xmonad-contrib
