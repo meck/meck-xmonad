@@ -1,4 +1,4 @@
-module Util.Scaling (scaleStartupHook, mkXPrompt', confirmPrompt', switchProjectPrompt', renameProjectPrompt', shiftToProjectPrompt', changeProjectDirPrompt', scaleDimension, scaleBorder, incScreenWindowSpacing', decScreenWindowSpacing') where
+module Util.Scaling (scaleStartupHook, mkXPrompt', confirmPrompt', switchProjectPrompt', renameProjectPrompt', shiftToProjectPrompt', changeProjectDirPrompt', scaleDimension, scaleBorder, incScreenWindowSpacing', decScreenWindowSpacing', runSelectedAction') where
 
 --  ╭──────────────────────────────────────────────────────────╮
 --  │   Track `GDK_SCALE` and provide wrapers of some other    │
@@ -13,6 +13,7 @@ import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import XMonad
 import XMonad.Actions.DynamicProjects (changeProjectDirPrompt, renameProjectPrompt, shiftToProjectPrompt, switchProjectPrompt)
+import XMonad.Actions.GridSelect
 import XMonad.Layout.Spacing (Border, borderMap, decScreenWindowSpacing, incScreenWindowSpacing)
 import XMonad.Prompt (ComplFunction, XPConfig (height), XPrompt, mkXPrompt)
 import XMonad.Prompt.ConfirmPrompt (confirmPrompt)
@@ -79,3 +80,18 @@ incScreenWindowSpacing' = incScreenWindowSpacing <=< scaleDimension
 
 decScreenWindowSpacing' :: Integer -> X ()
 decScreenWindowSpacing' = decScreenWindowSpacing <=< scaleDimension
+
+-- Grid select
+
+scaleGSCfg :: GSConfig a -> X (GSConfig a)
+scaleGSCfg c = do
+  DisplayScale sf <- XS.get
+  pure $
+    c
+      { gs_cellheight = gs_cellheight c * sf,
+        gs_cellwidth = gs_cellwidth c * sf,
+        gs_cellpadding = gs_cellpadding c * sf
+      }
+
+runSelectedAction' :: GSConfig (X ()) -> [(String, X ())] -> X ()
+runSelectedAction' cfg cmd = scaleGSCfg cfg >>= flip runSelectedAction cmd

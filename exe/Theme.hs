@@ -1,6 +1,8 @@
-module Theme (defaultSpacing, myFont, fontW, myPromptTheme, hotPromptTheme, decoBarTheme, copiedBarTheme) where
+module Theme (defaultSpacing, myFont, myPromptTheme, hotPromptTheme, decoBarTheme, copiedBarTheme, shortcutsTheme) where
 
 import Colors.Nord
+import XMonad
+import XMonad.Actions.GridSelect
 import XMonad.Layout.Decoration
 import XMonad.Prompt
 
@@ -8,7 +10,7 @@ defaultSpacing :: Integer
 defaultSpacing = 8
 
 myFont :: String
-myFont = "xft:Roboto Condensed"
+myFont = fontW 50 "xft:Inter"
 
 fontW :: Integer -> String -> String
 fontW w = (<> ":weight=" <> show w)
@@ -19,6 +21,9 @@ fontW w = (<> ":weight=" <> show w)
 
 fgCol :: String
 fgCol = hexCol nord4
+
+fgColAlt :: String
+fgColAlt = hexCol nord0
 
 bgCol :: String
 bgCol = hexCol nord1
@@ -48,7 +53,7 @@ specialCol = hexCol nord15
 myPromptTheme :: XPConfig
 myPromptTheme =
   def
-    { font = fontW 100 myFont,
+    { font = myFont,
       bgColor = bgCol,
       fgColor = fgCol,
       fgHLight = activeCol,
@@ -91,3 +96,20 @@ copiedBarTheme =
       inactiveTextColor = specialCol,
       urgentTextColor = specialCol
     }
+
+-- Config
+shortcutsTheme :: GSConfig (X ())
+shortcutsTheme =
+  (buildDefaultGSConfig defaultColorizer)
+    { gs_cellheight = 50,
+      gs_cellwidth = 300,
+      gs_cellpadding = 10,
+      gs_colorizer = colr,
+      gs_font = myFont,
+      gs_originFractY = 0.33,
+      gs_navigate = navNSearch,
+      gs_bordercolor = accentCol
+    }
+  where
+    colr _ True = pure (bgCol, activeCol)
+    colr _ False = pure (bgCol, fgCol)

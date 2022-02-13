@@ -49,7 +49,7 @@ myKeys conf =
     subKeys "System"
         [ ("M-q"                    , addName "Restart XMonad"              $ spawn "xmonad --restart")
         , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt' hotPromptTheme "quit XMonad" $ io exitSuccess)
-        , ("M-'"                    , addName "Shortcuts Menu"              shortcutsPrompt)
+        , ("M-'"                    , addName "Shortcuts Menu"              runShortcuts)
         , ("M-C-<Space>"            , addName "Toggle Keyboard layout"      toggleKeyboard)
         , ("<Pause>"                , addName "Increase Monitor Backlight"  $ spawn "backlight inc")
         , ("<Scroll_lock>"          , addName "Decrease Monitor Backlight"  $ spawn "backlight dec")
@@ -102,9 +102,6 @@ myKeys conf =
     subKeys "Workspaces"
          (
          [ ("M-w"                   , addName "Switch to Project"          $ switchProjectPrompt' myPromptTheme)
-         , ("M-S-w s"               , addName "Shift to Project"           $ shiftToProjectPrompt' myPromptTheme)
-         , ("M-S-w r"               , addName "Rename Project"             $ renameProjectPrompt' myPromptTheme)
-         , ("M-S-w d"               , addName "Change project directory"   $ changeProjectDirPrompt' myPromptTheme)
          , ("M-<Escape>"            , addName "Next non-empty workspace"   nextNonEmptyWS)
          , ("M-S-<Escape>"          , addName "Prev non-empty workspace"   prevNonEmptyWS)
          , ("M-`"                   , addName "Next non-empty workspace"   nextNonEmptyWS)

@@ -1,19 +1,11 @@
-{-# LANGUAGE TupleSections #-}
+module Misc (myTerminal, myAltTerminal, myBrowser, myLauncher, myCalculator, rofiClip, myProcessViewer, scratchpads, runShortcuts) where
 
-module Misc (shortcutsPrompt, myTerminal, myAltTerminal, myBrowser, myLauncher, myCalculator, rofiClip, myProcessViewer, scratchpads) where
-
-import Control.Arrow (first)
-import Control.Monad.Trans.State.Lazy (StateT)
-import Data.List (intercalate)
-import qualified Data.Map as M
 import Hooks.Misc
-import Text.ParserCombinators.ReadP (readP_to_S)
 import Theme
 import Util.Scaling
 import XMonad
-import XMonad.Prompt
-import XMonad.Util.EZConfig
 import XMonad.Util.NamedScratchpad
+import XMonad.Actions.SinkAll (sinkAll)
 
 --  ╭──────────────────────────────────────────────────────────╮
 --  │                       Applications                       │
@@ -61,35 +53,15 @@ scratchpads =
 --  │                        Shortcuts                         │
 --  ╰──────────────────────────────────────────────────────────╯
 
-shortcutsCmds :: [([Char], [Char], StateT XPState IO ())]
-shortcutsCmds =
-  [ ("a", "Autorandr", spawn "rofi-autorandr"),
-    ("v", "Fetch from clipboard", spawn rofiClip),
-    ("e", "Emoji Picker", spawn "rofi-emoji")
+shortcutsGScmds :: [(String, X ())]
+shortcutsGScmds =
+  [ ("Clipboard", spawn rofiClip),
+    ("Sink all", sinkAll),
+    ("Project: Rename", renameProjectPrompt' myPromptTheme),
+    ("Project: cd", changeProjectDirPrompt' myPromptTheme),
+    ("Emoji", spawn "rofi-emoji"),
+    ("Autorandr", spawn "rofi-autorandr")
   ]
 
-
--- Display a prompt with hotkeys
--- as in `shortcutsCmds`
-shortcutsPrompt :: X ()
-shortcutsPrompt =
-  mkXPrompt'
-    ShortcutsPrompt
-    promptCfg
-    (const $ pure [])
-    (const $ pure ())
-  where
-    promptCfg = myPromptTheme {promptKeymap = keymap'}
-    keymap' = M.fromList $ first (0,) <$> ((xK_Escape, quit) : keymap)
-    keymap =
-      ( \(c, _, action) -> (fst $ head $ readP_to_S parseKey c, action >> quit)
-      )
-        <$> shortcutsCmds
-
-data ShortcutsPrompt = ShortcutsPrompt
-
-instance XPrompt ShortcutsPrompt where
-  showXPrompt ShortcutsPrompt =
-    intercalate "    " $
-      (\(c, desc, _) -> c <> ": " <> desc <> "  ")
-        <$> shortcutsCmds
+runShortcuts :: X ()
+runShortcuts = runSelectedAction' shortcutsTheme shortcutsGScmds
