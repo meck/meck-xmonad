@@ -22,9 +22,6 @@ fontW w = (<> ":weight=" <> show w)
 fgCol :: String
 fgCol = hexCol nord4
 
-fgColAlt :: String
-fgColAlt = hexCol nord0
-
 bgCol :: String
 bgCol = hexCol nord1
 

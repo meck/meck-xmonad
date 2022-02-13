@@ -1,11 +1,11 @@
-module Misc (myTerminal, myAltTerminal, myBrowser, myLauncher, myCalculator, rofiClip, myProcessViewer, scratchpads, runShortcuts) where
+module Misc (myTerminal, myAltTerminal, myBrowser, myLauncher, myCalculator, myProcessViewer, scratchpads, runShortcuts) where
 
 import Hooks.Misc
 import Theme
 import Util.Scaling
 import XMonad
-import XMonad.Util.NamedScratchpad
 import XMonad.Actions.SinkAll (sinkAll)
+import XMonad.Util.NamedScratchpad
 
 --  ╭──────────────────────────────────────────────────────────╮
 --  │                       Applications                       │
@@ -28,10 +28,6 @@ myCalculator = "rofi-calc"
 
 myProcessViewer :: String
 myProcessViewer = myAltTerminal <> " --title Htop -e htop"
-
-rofiClip :: String
-rofiClip =
-  "rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'"
 
 --  ╭──────────────────────────────────────────────────────────╮
 --  │                       Scratchpads                        │
@@ -60,8 +56,12 @@ shortcutsGScmds =
     ("Project: Rename", renameProjectPrompt' myPromptTheme),
     ("Project: cd", changeProjectDirPrompt' myPromptTheme),
     ("Emoji", spawn "rofi-emoji"),
-    ("Autorandr", spawn "rofi-autorandr")
+    ("Autorandr", spawn "rofi-autorandr"),
+    confirm "Clipboard clear history" $ spawn "greenclip clear"
   ]
+  where
+    rofiClip = "rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'"
+    confirm label action = (label, confirmPrompt' hotPromptTheme label action)
 
 runShortcuts :: X ()
 runShortcuts = runSelectedAction' shortcutsTheme shortcutsGScmds

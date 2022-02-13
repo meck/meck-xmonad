@@ -57,7 +57,6 @@ myKeys conf =
 
     subKeys "Launcher"
          [ ("M-<Space>"             , addName "Launcher"                   $ spawn myLauncher)
-         , ("M-C-v"                 , addName "Clipboard"                  $ spawn rofiClip)
          , ("M-<Return>"            , addName "Terminal"                   $ spawn myTerminal)
          , ("M-S-<Return>"          , addName "Alt Terminal"               $ spawn myAltTerminal)
          , ("M-\\"                  , addName "Browser"                    $ spawn myBrowser)
