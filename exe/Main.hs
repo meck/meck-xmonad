@@ -59,7 +59,7 @@ main :: IO ()
 main =
   xmonad $
     docks $
-      XMonad.Actions.DynamicProjects.dynamicProjects projects $
+      dynamicProjects projects $
         withNavigation2DConfig myNav2DConf $
           ewmh $
             pagerHints $
@@ -104,17 +104,26 @@ wsMisc = "misc"
 wsSys :: String
 wsSys = "sys"
 
+wsMail :: String
+wsMail = "mail"
+
 myWorkspaces :: [String]
 myWorkspaces = [wsDefault, wsMisc]
 
 projects :: [Project]
 projects =
-  [ XMonad.Actions.DynamicProjects.Project
+  [ Project
       { projectName = wsSys,
         projectDirectory = "/etc/nixos/",
         projectStartHook = Just $ do
           spawnOn wsSys myTerminal
           spawnOn wsSys $ myBrowser <> " --new-window status.nixos.org"
+      },
+    Project
+      { projectDirectory = "~",
+        projectName = wsMail,
+        projectStartHook = Just $ do
+          spawnOn wsSys myEmail
       }
   ]
 
@@ -213,7 +222,7 @@ myManageHook =
 --  │                         Layouts                          │
 --  ╰──────────────────────────────────────────────────────────╯
 
-myLayoutHook = mkToggle1 ZOOM $ threeCol ||| tall ||| bsp ||| full
+myLayoutHook = mkToggle1 ZOOM $ tall ||| threeCol ||| bsp ||| full
   where
     named x = renamed [Replace x]
     defBorder = Border defaultSpacing defaultSpacing defaultSpacing defaultSpacing
@@ -243,7 +252,7 @@ myLayoutHook = mkToggle1 ZOOM $ threeCol ||| tall ||| bsp ||| full
               mySpacing $
                 mkToggle1 MIRROR $
                   mkToggle1 REFLECTX $
-                    ResizableTall 1 (1 / 200) (11 / 20) []
+                    ResizableTall 1 (1 / 200) (9 / 20) []
 
     threeCol =
       named "Columns" $

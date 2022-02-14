@@ -1,4 +1,4 @@
-module Misc (myTerminal, myAltTerminal, myBrowser, myLauncher, myCalculator, myProcessViewer, scratchpads, runShortcuts) where
+module Misc (myTerminal, myAltTerminal, myBrowser, myLauncher, myCalculator, myEmail, myProcessViewer, scratchpads, runShortcuts) where
 
 import Hooks.Misc
 import Theme
@@ -25,6 +25,9 @@ myLauncher = "rofi -show combi -show-icons"
 
 myCalculator :: String
 myCalculator = "rofi-calc"
+
+myEmail :: String
+myEmail = "evolution"
 
 myProcessViewer :: String
 myProcessViewer = myAltTerminal <> " --title Htop -e htop"
