@@ -40,7 +40,13 @@ viewPortsLogHookCustom f = withWindowSet $ \s -> do
       screenLookup = map (\scr -> (W.tag (W.workspace scr), scr)) (W.screens s)
       screenForWS w = currentPos <$> (lookup (W.tag w) screenLookup <|> Just focusedScreen)
       desktopViewports = concat . catMaybes $ screenForWS <$> ws
-  whenChanged (DesktopViewports desktopViewports) $ setDesktopViewports desktopViewports
+  whenChanged (DesktopViewports desktopViewports) $ do
+    setDesktopViewports desktopViewports
+    -- polybar only triggers a change of the listed workspaces
+    -- on _NET_NUMBER_OF_DESKTOPS or _NET_DESKTOP_NAMES. So to
+    -- make the "hidden" workspaces be listed on the currrent
+    -- active screen we need to trigger a change.
+    setNumberOfDesktops $ length ws
   where
     currentPos = rectXY . screenRect . W.screenDetail
     rectXY (Rectangle x y _ _) = [fromIntegral x, fromIntegral y]
@@ -51,6 +57,13 @@ setDesktopViewports vps = withDisplay $ \dpy -> do
   a <- getAtom "_NET_DESKTOP_VIEWPORT"
   c <- getAtom "CARDINAL"
   io $ changeProperty32 dpy r a c propModeReplace $ map fromIntegral vps
+
+setNumberOfDesktops :: (Integral a) => a -> X ()
+setNumberOfDesktops n = withDisplay $ \dpy -> do
+    a <- getAtom "_NET_NUMBER_OF_DESKTOPS"
+    c <- getAtom "CARDINAL"
+    r <- asks theRoot
+    io $ changeProperty32 dpy r a c propModeReplace [fromIntegral n]
 
 whenChanged :: (Eq a, ExtensionClass a) => a -> X () -> X ()
 whenChanged v action = do
