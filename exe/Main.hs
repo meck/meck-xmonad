@@ -27,9 +27,8 @@ import XMonad.Actions.SwapPromote
 import XMonad.Hooks.DynamicProperty
 import XMonad.Hooks.EwmhDesktops
   ( ewmh,
-    ewmhDesktopsEventHookCustom,
-    ewmhDesktopsLogHookCustom,
-    fullscreenEventHook,
+    ewmhFullscreen,
+    setEwmhWorkspaceSort, addEwmhWorkspaceSort,
   )
 import XMonad.Hooks.InsertPosition
 import XMonad.Hooks.ManageDocks
@@ -50,6 +49,7 @@ import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
 import XMonad.Util.NamedActions
 import XMonad.Util.NamedScratchpad
+import XMonad.Util.WorkspaceCompare (filterOutWs)
 
 --  ╭──────────────────────────────────────────────────────────╮
 --  │                           Main                           │
@@ -57,13 +57,20 @@ import XMonad.Util.NamedScratchpad
 
 main :: IO ()
 main =
-  xmonad $
-    docks $
-      dynamicProjects projects $
-        withNavigation2DConfig myNav2DConf $
-          ewmh $
-            pagerHints $
-              addDescrKeys' ((myModMask, xK_F1), showKeybindings) myKeys myConfig
+  xmonad
+    . docks
+    . addEwmhWorkspaceSort (pure fil)
+    . ewmhFullscreen
+    . ewmh
+    . dynamicProjects projects
+    . withNavigation2DConfig myNav2DConf
+    -- . setEwmhWorkspaceSort (pure fil)
+    . pagerHints
+    . addDescrKeys' ((myModMask, xK_F1), showKeybindings) myKeys
+    $ myConfig
+
+-- TODO
+fil = filterOutWs [scratchpadWorkspaceTag]
 
 --  ╭──────────────────────────────────────────────────────────╮
 --  │                          Config                          │
@@ -134,21 +141,12 @@ projects =
 myEventHook :: Event -> X All
 myEventHook =
   mffZoomedEventHook
-    <> fullscreenEventHook
     <> spotifyFloatHook
-    <> modifyWSPorderHook
   where
     -- Spotify changes name after launch so we use a
     -- dynamicTitle event hook to position the window
     spotifyFloatHook =
       dynamicTitle (title =? "Spotify" --> doCenterRect (2 / 3, 2 / 3))
-
-    -- Reorder the workspaces using DynamicWorkspaceOrder and
-    -- remove NSP workspace from whats sent to polybar.
-    -- Used by polybar for clicking workspaces.
-    modifyWSPorderHook e = do
-      ordS <- DO.getSortByOrder
-      ewmhDesktopsEventHookCustom (ordS . namedScratchpadFilterOutWorkspace) e
 
 --  ╭──────────────────────────────────────────────────────────╮
 --  │                           Logs                           │
@@ -156,9 +154,7 @@ myEventHook =
 
 myLogHook :: X ()
 myLogHook = do
-  ordS <- (. namedScratchpadFilterOutWorkspace) <$> DO.getSortByOrder
-  -- ewmh should be first to mimize flickering in polybar
-  ewmhDesktopsLogHookCustom ordS
+  ordS <- (. fil) <$> DO.getSortByOrder
   viewPortsLogHookCustom ordS
   shadowZoomLogHook
   shadowFloatingLogHook
