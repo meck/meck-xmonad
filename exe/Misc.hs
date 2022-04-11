@@ -27,7 +27,7 @@ myCalculator :: String
 myCalculator = "rofi-calc"
 
 myEmail :: String
-myEmail = "evolution"
+myEmail = "thunderbird"
 
 myProcessViewer :: String
 myProcessViewer = myAltTerminal <> " --title Htop -e htop"
