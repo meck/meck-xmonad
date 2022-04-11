@@ -29,6 +29,7 @@ import XMonad.Util.EZConfig
 import XMonad.Util.NamedActions (NamedAction, addName, showKm, subtitle, (^++^))
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run (spawnPipe)
+import XMonad.Util.WorkspaceCompare (filterOutWs)
 
 --  ╭──────────────────────────────────────────────────────────╮
 --  │                         Modmask                          │
@@ -171,17 +172,17 @@ dirs = [D, U, L, R]
 
 nextNonEmptyWS :: X ()
 nextNonEmptyWS =
-  findWorkspace getSortByOrderNoSP Next HiddenNonEmptyWS 1
+  findWorkspace getSortByOrderNoSP Next (hiddenWS :&: Not emptyWS) 1
     >>= \t -> windows . W.view $ t
 
 prevNonEmptyWS :: X ()
 prevNonEmptyWS =
-  findWorkspace getSortByOrderNoSP Prev HiddenNonEmptyWS 1
+  findWorkspace getSortByOrderNoSP Prev (hiddenWS :&: Not emptyWS) 1
     >>= \t -> windows . W.view $ t
 
 getSortByOrderNoSP :: X ([WindowSpace] -> [WindowSpace])
 getSortByOrderNoSP =
-  fmap (. namedScratchpadFilterOutWorkspace) DO.getSortByOrder
+  fmap (. filterOutWs [scratchpadWorkspaceTag]) DO.getSortByOrder
 
 notNSP :: [String] -> [String]
 notNSP = filter (/= "NSP")
