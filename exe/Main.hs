@@ -30,7 +30,6 @@ import XMonad.Hooks.EwmhDesktops
     ewmh,
     ewmhFullscreen,
   )
-import XMonad.Hooks.InsertPosition
 import XMonad.Hooks.ManageDocks
   ( avoidStruts,
     docks,

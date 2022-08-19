@@ -51,7 +51,6 @@ myKeys conf =
         [ ("M-q"                    , addName "Restart XMonad"              $ spawn "xmonad --restart")
         , ("M-S-q"                  , addName "Quit XMonad"                 $ confirmPrompt' hotPromptTheme "quit XMonad" $ io exitSuccess)
         , ("M-'"                    , addName "Shortcuts Menu"              runShortcuts)
-        , ("M-C-<Space>"            , addName "Toggle Keyboard layout"      toggleKeyboard)
         , ("<Pause>"                , addName "Increase Monitor Backlight"  $ spawn "backlight inc")
         , ("<Scroll_lock>"          , addName "Decrease Monitor Backlight"  $ spawn "backlight dec")
         ] ^++^
@@ -213,7 +212,3 @@ killAllorRemWS =
   gets (W.index . windowset) >>= \case
     [] -> removeEmptyWorkspace
     _ -> confirmPrompt' hotPromptTheme "kill all" killAll
-
--- Change keyboard layout between us and swe
-toggleKeyboard :: X ()
-toggleKeyboard = spawn "switch-keyboard-layout"
