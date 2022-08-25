@@ -43,7 +43,8 @@ scratchpads =
     NS "Mpv" "mpv --idle=yes --force-window=yes" (className =? "mpv") doFloatVideo,
     NS "Calculator" "galculator" (className =? "Galculator") doFloatTopCenter,
     NS "Process Viewer" myProcessViewer (title =? "Htop") $ doTopRect (1 / 2, 1 / 2),
-    NS "Slack" "slack" (className =? "Slack") $ doTopRect (2 / 3, 2 / 3)
+    NS "Slack" "slack" (className =? "Slack") $ doTopRect (2 / 3, 2 / 3),
+    NS "Obsidan" "obsidian" (className =? "obsidian") $ doTopRect (1 / 2, 7 / 12)
   ]
   where
     onePassMainWin = className =? "1Password" <&&> (not <$> (title =? "Two-factor authentication"))

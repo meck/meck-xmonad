@@ -61,7 +61,7 @@ myKeys conf =
          , ("M-S-<Return>"          , addName "Alt Terminal"               $ spawn myAltTerminal)
          , ("M-\\"                  , addName "Browser"                    $ spawn myBrowser)
          , ("<Print>"               , addName "Screenshot"                 $ spawn "flameshot gui")
-         , ("M-n"                   , addName "Calculator"                 $ spawn myCalculator)
+         , ("M-c"                   , addName "Calculator"                 $ spawn myCalculator)
          ] ^++^
 
     subKeys "Scratchpads"
@@ -70,6 +70,7 @@ myKeys conf =
          , ("M-t"                   , addName "NSP Processes"              $ namedScratchpadAction scratchpads "Process Viewer")
          , ("M-p"                   , addName "NSP Password Manager"       $ namedScratchpadAction scratchpads "1Password")
          , ("M-s"                   , addName "NSP Slack"                  $ namedScratchpadAction scratchpads "Slack")
+         , ("M-n"                   , addName "NSP Obsidian"               $ namedScratchpadAction scratchpads "Obsidan")
          ] ^++^
 
     subKeys "Windows"
@@ -153,7 +154,7 @@ showKeybindings x = addName "Show Keybindings" $
             "--close-on-unfocus",
             "--fontname='Iosevka 10'"
           ]
-    hPutStr h $ unlines ["XMonad bindings", "Search with C-s", ""]
+    hPutStr h $ unlines ["XMonad bindings", "Search with C-f", ""]
     hPutStr h $ unlines $ showKm x
     hClose h
 
