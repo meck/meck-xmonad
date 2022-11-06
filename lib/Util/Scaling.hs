@@ -1,7 +1,7 @@
 module Util.Scaling (scaleStartupHook, mkXPrompt', confirmPrompt', switchProjectPrompt', renameProjectPrompt', shiftToProjectPrompt', changeProjectDirPrompt', scaleDimension, scaleBorder, incScreenWindowSpacing', decScreenWindowSpacing', runSelectedAction') where
 
 --  ╭──────────────────────────────────────────────────────────╮
---  │   Track `GDK_SCALE` and provide wrapers of some other    │
+--  │  Track `XMONAD_SCALE` and provide wrapers of some other  │
 --  │                        functions                         │
 --  │                  to respect any scaling                  │
 --  │                            --                            │
@@ -29,7 +29,7 @@ instance ExtensionClass DisplayScale where
 
 scaleStartupHook :: X ()
 scaleStartupHook = do
-  mScale <- liftIO $ lookupEnv "GDK_SCALE"
+  mScale <- liftIO $ lookupEnv "XMONAD_SCALE"
   let mScale' = readMaybe =<< mScale
   case mScale' of
     Nothing -> pure ()

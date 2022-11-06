@@ -167,7 +167,7 @@ myLogHook = do
 
 myStartupHook :: X ()
 myStartupHook = do
-  -- For storing and using `GDK_SCALE` see Util.Scaling
+  -- For storing and using `XMONAD_SCALE` see Util.Scaling
   scaleStartupHook
 
   -- Provide _NET_DESKTOP_VIEWPORT
