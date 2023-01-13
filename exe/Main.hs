@@ -44,8 +44,11 @@ import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.Reflect
 import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
+import XMonad.Layout.Simplest (Simplest (Simplest))
 import XMonad.Layout.Spacing
+import XMonad.Layout.SubLayouts (subLayout)
 import XMonad.Layout.ThreeColumns
+import XMonad.Layout.WindowNavigation
 import XMonad.Util.NamedActions
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.WorkspaceCompare (filterOutWs)
@@ -215,23 +218,28 @@ myManageHook =
 --  │                         Layouts                          │
 --  ╰──────────────────────────────────────────────────────────╯
 
-myLayoutHook = mkToggle1 ZOOM $ tall ||| threeCol ||| bsp ||| full
+myLayoutHook =
+  mkToggle1 ZOOM $
+    windowNavigation $ -- For tabbed groups navigation
+      tall ||| threeCol ||| bsp ||| full
   where
     named x = renamed [Replace x]
     defBorder = Border defaultSpacing defaultSpacing defaultSpacing defaultSpacing
     mySpacing = scaledSpacingRaw False defBorder True defBorder True
-    addCopiedBar = decoration shrinkText copiedBarTheme CopiedDecoration
-    addDecoBar = decoration shrinkText decoBarTheme (SideDecoration U)
-    myDecoration = addDecoBar . addCopiedBar
-
+    mySubLayout = subLayout [] Simplest
+    myDecoration = addCopiedBar . addDecoBar
+      where
+        addCopiedBar = decoration shrinkText copiedBarTheme CopiedDecoration
+        addDecoBar = decoration shrinkText decoBarTheme Tabbed
     bsp =
       named "BSP" $
         avoidStruts $
           borderResize $
             myDecoration $
-              mkToggle1 MIRROR $
-                mkToggle1 REFLECTX $
-                  mySpacing emptyBSP
+              mySubLayout $
+                mkToggle1 MIRROR $
+                  mkToggle1 REFLECTX $
+                    mySpacing emptyBSP
 
     full =
       named "Full" $
@@ -242,17 +250,19 @@ myLayoutHook = mkToggle1 ZOOM $ tall ||| threeCol ||| bsp ||| full
         avoidStruts $
           borderResize $
             myDecoration $
-              mySpacing $
+              mySubLayout $
                 mkToggle1 MIRROR $
                   mkToggle1 REFLECTX $
-                    ResizableTall 1 (1 / 200) (9 / 20) []
+                    mySpacing $
+                      ResizableTall 1 (1 / 200) (9 / 20) []
 
     threeCol =
       named "Columns" $
         avoidStruts $
           borderResize $
             myDecoration $
-              mkToggle1 MIRROR $
-                mkToggle1 REFLECTX $
-                  mySpacing $
-                    ThreeColMid 1 (1 / 200) (7 / 16)
+              mySubLayout $
+                mkToggle1 MIRROR $
+                  mkToggle1 REFLECTX $
+                    mySpacing $
+                      ThreeColMid 1 (1 / 200) (7 / 16)

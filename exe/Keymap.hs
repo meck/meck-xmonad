@@ -24,6 +24,7 @@ import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.Reflect
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Spacing
+import XMonad.Layout.SubLayouts (GroupMsg (UnMerge, UnMergeAll), onGroup, pushGroup)
 import qualified XMonad.StackSet as W
 import XMonad.Util.EZConfig
 import XMonad.Util.NamedActions (NamedAction, addName, showKm, subtitle, (^++^))
@@ -86,6 +87,14 @@ myKeys conf =
          ++ zipM' "M-S-"            "Move window to screen"                arrowKeys dirs windowToScreen True
          ++ zipM' "M-C-"            "Swap workspace to screen"             arrowKeys dirs screenSwap True
          ) ^++^
+
+    subKeys "Tabs"
+          [ ("M-o"                  , addName "Tab with window above"      $ sendMessage $ pushGroup U)
+          , ("M-i"                  , addName "Focus previous tab"         $ onGroup W.focusUp')
+          , ("M-u"                  , addName "Tab ungroup"                $ withFocused (sendMessage . UnMerge))
+          , ("M-S-u"                , addName "Tab ungroup all"            $ withFocused (sendMessage . UnMergeAll)) 
+          ] ^++^
+
 
     subKeys "Resize"
         [ ("M-["                    , addName "Expand L"                   $ tryMsgR (ExpandTowards L) Shrink)

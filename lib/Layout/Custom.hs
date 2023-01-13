@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module Layout.Custom (ScaledSpacing (..), scaledSpacingRaw, SideDecoration (..), CopiedDecoration (..)) where
+module Layout.Custom (ScaledSpacing (..), scaledSpacingRaw, SideDecoration (..), CopiedDecoration (..), TabbedDecoration (..)) where
 
 import Util.Scaling
 import XMonad
@@ -9,6 +9,7 @@ import XMonad.Actions.Navigation2D (Direction2D (D, L, R, U))
 import XMonad.Layout.Decoration (DecorationStyle (decorate, shrink), LayoutModifier (modifierDescription, modifyLayout, pureMess), ModifiedLayout (ModifiedLayout))
 import XMonad.Layout.LayoutModifier (pureModifier)
 import XMonad.Layout.Spacing (Border, Spacing (Spacing))
+import XMonad.Prelude (elemIndex)
 import qualified XMonad.StackSet as W
 import XMonad.Util.XUtils (fi)
 
@@ -50,15 +51,34 @@ instance Eq a => DecorationStyle SideDecoration a where
 
   decorate b dw dh _ st _ (win, Rectangle x y w h)
     | win `elem` W.integrate st && dw < w && dh < h = do
-      dw' <- scaleDimension dw
-      dh' <- scaleDimension dh
-      pure $
-        Just $ case b of
-          SideDecoration U -> Rectangle x y w dh'
-          SideDecoration R -> Rectangle (x + fi (w - dw')) y dw' h
-          SideDecoration D -> Rectangle x (y + fi (h - dh')) w dh'
-          SideDecoration L -> Rectangle x y dw' h
+        dw' <- scaleDimension dw
+        dh' <- scaleDimension dh
+        pure $
+          Just $ case b of
+            SideDecoration U -> Rectangle x y w dh'
+            SideDecoration R -> Rectangle (x + fi (w - dw')) y dw' h
+            SideDecoration D -> Rectangle x (y + fi (h - dh')) w dh'
+            SideDecoration L -> Rectangle x y dw' h
     | otherwise = pure Nothing
+
+--  ╭─────────────────────────────╮
+--  │    Tabbar, scaling aware    │
+--  ╰─────────────────────────────╯
+data TabbedDecoration a = Tabbed deriving (Read, Show)
+
+instance Eq a => DecorationStyle TabbedDecoration a where
+  decorate _ _ ht _ s wrs (w, r@(Rectangle x y wh _)) = do
+    ht' <- scaleDimension ht
+    pure $ Just $ Rectangle nx y wid (fi ht')
+    where
+      ws = filter (`elem` map fst (filter ((== r) . snd) wrs)) (W.integrate s)
+      loc k h i = k + fi ((h * fi i) `div` max 1 (fi $ length ws))
+      esize k h = fi $ maybe k (\i -> loc k h (i + 1) - loc k h i) $ w `elemIndex` ws
+      wid = esize x wh
+      n k h = maybe k (loc k h) $ w `elemIndex` ws
+      nx = n x wh
+
+  shrink _ (Rectangle _ _ _ dh) (Rectangle x y w h) = Rectangle x (y + fi dh) w (h - dh)
 
 --  ╭──────────────────────────────────────────────────────────╮
 --  │   Decorator with a bar at the bottom only for windows    │
